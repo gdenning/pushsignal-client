@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/alertListItemLayout"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<ImageView android:layout_width="30px"
+		android:src="@drawable/invite_member_no_reply" android:layout_height="30px"
+		android:id="@+id/alertImage" android:layout_alignParentTop="true"></ImageView>
+	<TextView android:text="@+id/alertEntryText"
+		android:layout_height="wrap_content" android:id="@+id/alertEntryText"
+		android:layout_toRightOf="@+id/alertImage" android:layout_alignTop="@+id/alertImage"
+		android:layout_width="wrap_content"></TextView>
+	<Chronometer android:text="Chronometer" android:id="@+id/timeSinceAck"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:layout_toRightOf="@+id/alertEntryText"
+		android:layout_alignTop="@+id/alertEntryText"
+		android:layout_marginLeft="2dp" android:format="[%s]"></Chronometer>
+</RelativeLayout>

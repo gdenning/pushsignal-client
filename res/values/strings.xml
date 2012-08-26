@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Push Signal</string>
+    <string name="service_name">Push Signal Service</string>
+    <string name="c2dm_service_name">Push Signal C2DM Service</string>
+    <string name="edit_event">Edit Event</string>
+    <string name="invite_friend">Invite Friend</string>
+    <string name="leave_delete_event">Leave/Delete</string>
+    <string name="join_event">Join Event</string>
+    <string name="refresh">Refresh</string>
+    <string-array name="event_suggestions">
+        <item>Custom</item>
+        <item>I\'m waiting outside</item>
+		<item>I\'m on my way</item>
+		<item>Dinner is ready</item>
+		<item>Meet back at the car</item>
+		<item>Join conference call</item>
+		<item>Server is down</item>
+		<item>Baby is on the way</item>
+		<item>Major news event</item>
+    </string-array>
+    <string-array name="event_triggerable_by">
+        <item>All Members</item>
+        <item>Owner Only</item>
+		<item>URL Only</item>
+    </string-array>
+    
+</resources>

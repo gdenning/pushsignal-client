@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/activityListItemLayout"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<ImageView android:layout_width="48px" android:src="@drawable/invite"
+		android:layout_height="48px" android:id="@+id/activityImage"
+		android:layout_alignParentTop="true"></ImageView>
+	<TextView android:id="@+id/activitySender" android:text="Invite Sender"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:layout_toRightOf="@+id/activityImage" android:layout_alignTop="@+id/activityImage"></TextView>
+	<TextView android:id="@+id/activityMembersOrPoints"
+		android:text="1 member" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_alignParentRight="true"></TextView>
+	<TextView android:id="@+id/activityName" android:text="Name"
+		android:layout_height="wrap_content" android:layout_width="match_parent"
+		android:layout_below="@+id/activitySender" android:layout_alignLeft="@+id/activitySender"
+		android:textStyle="bold"></TextView>
+</RelativeLayout>

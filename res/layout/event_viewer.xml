@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/eventViewerLayout"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:padding="5dp">
+	<ImageButton android:id="@+id/triggerButton" android:src="@drawable/signal"
+		android:layout_alignParentTop="true" android:layout_alignParentRight="true"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageButton>
+	<TextView android:id="@+id/eventName" android:textStyle="bold"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:text="Name" android:layout_toLeftOf="@+id/triggerButton"
+		android:layout_alignTop="@+id/triggerButton"></TextView>
+	<TextView android:id="@+id/eventDescription" android:text="Description"
+		android:layout_width="fill_parent" android:layout_below="@+id/eventName"
+		android:layout_toLeftOf="@+id/triggerButton" android:layout_height="100dip"></TextView>
+	<TextView android:id="@+id/lastTriggeredCaption"
+		android:textStyle="bold" android:layout_height="wrap_content"
+		android:text="Last Triggered:" android:layout_below="@+id/eventDescription"
+		android:layout_width="150dip"></TextView>
+	<TextView android:id="@+id/lastTriggered" android:text="Time Ago"
+		android:layout_height="wrap_content" android:layout_toRightOf="@+id/lastTriggeredCaption"
+		android:layout_width="wrap_content" android:layout_alignTop="@+id/lastTriggeredCaption"></TextView>
+	<TextView android:id="@+id/membersCaption" android:text="Members:"
+		android:layout_height="wrap_content" android:textStyle="bold"
+		android:layout_below="@+id/lastTriggeredCaption" android:layout_width="match_parent"></TextView>
+	<ListView android:id="@+id/membersList" android:layout_width="fill_parent"
+		android:layout_below="@+id/membersCaption" android:layout_above="@+id/pressMenuSuggestion"
+		android:layout_height="match_parent"></ListView>
+	<TextView android:id="@+id/pressMenuSuggestion"
+		android:layout_alignParentBottom="true"
+		android:text="Press menu to invite friends to this event."
+		android:layout_height="wrap_content" android:layout_width="match_parent"
+		android:gravity="center_horizontal"></TextView>
+</RelativeLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/join_event"
+          android:icon="@drawable/ic_menu_grow"
+          android:title="@string/join_event" />
+</menu>

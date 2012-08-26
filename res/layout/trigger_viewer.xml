@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/triggerViewerLayout"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:padding="5dp">
+	<TextView android:id="@+id/eventName" android:textStyle="bold"
+		android:text="Name" android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:layout_alignParentTop="true"></TextView>
+	<TextView android:id="@+id/eventDescription" android:text="Description"
+		android:layout_width="fill_parent" android:layout_below="@+id/eventName"
+		android:layout_height="100dip"></TextView>
+	<TextView android:id="@+id/membersCaption" android:text="Members:"
+		android:layout_height="wrap_content" android:textStyle="bold"
+		android:layout_below="@+id/eventDescription" android:layout_width="match_parent"></TextView>
+	<ListView android:id="@+id/membersList" android:layout_width="fill_parent"
+		android:layout_below="@+id/membersCaption" android:layout_height="match_parent"></ListView>
+</RelativeLayout>

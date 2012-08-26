@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/eventListItemLayout"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<ImageView android:id="@+id/eventImage" android:layout_width="48px"
+		android:src="@drawable/event_private" android:layout_height="48px"
+		android:layout_alignParentLeft="true"></ImageView>
+	<TextView android:id="@+id/eventOwner" android:text="Owner"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:layout_toRightOf="@+id/eventImage" android:layout_alignTop="@+id/eventImage"></TextView>
+	<TextView android:id="@+id/eventMemberCount" android:text="1 member"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:layout_alignParentRight="true"></TextView>
+	<TextView android:id="@+id/eventName" android:text="Name"
+		android:layout_below="@+id/eventOwner" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_alignLeft="@+id/eventOwner"
+		android:textStyle="bold"></TextView>
+</RelativeLayout>

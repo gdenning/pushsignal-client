@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/widget45"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:padding="5dp">
+	<TextView android:id="@+id/widget30" android:layout_height="wrap_content"
+		android:text="Log-in to your PushSignal account" android:layout_width="match_parent"
+		android:gravity="center_horizontal" android:textStyle="bold">
+	</TextView>
+	<TextView android:id="@+id/widget33" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Email:">
+	</TextView>
+	<EditText android:id="@+id/emailEditor" android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+	</EditText>
+	<TextView android:id="@+id/widget40" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Password:">
+	</TextView>
+	<EditText android:id="@+id/passwordEditor"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:password="true">
+	</EditText>
+	<Button android:id="@+id/loginButton" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="Log-in">
+	</Button>
+	<Button android:layout_height="wrap_content"
+		android:layout_width="match_parent" android:text="Forgot Password"
+		android:id="@+id/forgotPasswordButton"></Button>
+</LinearLayout>

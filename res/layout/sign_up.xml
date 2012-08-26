@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/widget79"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:padding="5dp">
+	<TextView android:id="@+id/widget30" android:layout_height="wrap_content" android:text="Create a new PushSignal account" android:gravity="center_horizontal" android:layout_width="match_parent" android:textStyle="bold">
+	</TextView>
+	<TextView android:id="@+id/widget33" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Email:">
+	</TextView>
+	<EditText android:id="@+id/emailEditor" android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+	</EditText>
+	<TextView android:id="@+id/widget36" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Name:">
+	</TextView>
+	<EditText android:id="@+id/nameEditor" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:capitalize="words">
+	</EditText>
+	<Button android:id="@+id/createAccountButton"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:text="Create Account">
+	</Button>
+	<Button android:id="@+id/existingAccountButton"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:text="I have an existing account">
+	</Button>
+</LinearLayout>
