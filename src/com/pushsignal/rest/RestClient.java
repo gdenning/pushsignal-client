@@ -58,7 +58,7 @@ public class RestClient {
 	 * Constructor with no username/password info - should only be used to createAccount.
 	 */
 	public RestClient() {
-        // The time it takes to open TCP connection.
+		// The time it takes to open TCP connection.
 		httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, Constants.REST_CONNECTION_TIMEOUT);
 	}
 

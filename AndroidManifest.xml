@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.pushsignal" android:versionCode="11" android:versionName="1.10" android:installLocation="auto">
+	package="com.pushsignal" android:versionCode="12" android:versionName="1.20" android:installLocation="auto">
 
 	<!-- C2DM functionality was added in SDK version 8 -->
-	<uses-sdk android:minSdkVersion="8"/>
+	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />n
+	
+	<permission android:name="com.pushsignal.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	
+	<uses-permission android:name="com.pushsignal.permission.C2D_MESSAGE" />
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.READ_CONTACTS" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 	
 	<!-- To enable debugging, add this attribute: android:debuggable="true" -->
 	<application android:label="@string/app_name" android:icon="@drawable/launcher" android:theme="@android:style/Theme.Light">
@@ -29,8 +40,8 @@
 		<activity android:name=".activities.LogInActivity"/>
 		<activity android:name=".activities.SignUpActivity"/>
 		
-		<!-- Only C2DM servers can send messages for the app. If permission is not set - any other app can generate it --> 
-		<receiver android:name=".push.PushClientC2dmImpl"
+		<!-- Only GCM servers can send messages for the app. If permission is not set - any other app can generate it --> 
+		<receiver android:name=".push.PushClientGcmImpl"
 			android:permission="com.google.android.c2dm.permission.SEND">
 		    <!-- Receive the actual message -->
 		    <intent-filter>
@@ -51,14 +62,4 @@
 			</intent-filter>
 		</receiver>
 	</application>
-	
-	<permission android:name="com.pushsignal.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-	<uses-permission android:name="com.pushsignal.permission.C2D_MESSAGE" />
-	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.VIBRATE" />
-	<uses-permission android:name="android.permission.READ_CONTACTS" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 </manifest>

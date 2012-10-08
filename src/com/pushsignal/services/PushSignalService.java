@@ -19,7 +19,7 @@ import com.pushsignal.observers.ObserverData;
 import com.pushsignal.observers.ObserverData.ActionTypeEnum;
 import com.pushsignal.observers.ObserverData.ObjectTypeEnum;
 import com.pushsignal.push.PushClient;
-import com.pushsignal.push.PushClientC2dmImpl;
+import com.pushsignal.push.PushClientGcmImpl;
 import com.pushsignal.rest.RestClient;
 import com.pushsignal.rest.RestClientStoredCredentials;
 import com.pushsignal.xml.simple.ActivityDTO;
@@ -40,7 +40,7 @@ public class PushSignalService extends Service implements Observer {
 	private String deviceId;
 	private String registrationId;
 	
-	private static final String CLIENT_TYPE = "C2dm";
+	private static final String CLIENT_TYPE = "GCM";
 
 	/**
 	 * Notification from the pushClient about an incoming message or connection lost situation.
@@ -163,7 +163,7 @@ public class PushSignalService extends Service implements Observer {
 		AppObservable.getInstance().addObserver(this);
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		deviceId = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
-		pushClient = new PushClientC2dmImpl();
+		pushClient = new PushClientGcmImpl();
 
 		Log.d(Constants.SERVICE_LOG_TAG, "Attempting to register with C2DM");
 		pushClient.connectOrRegister(this);
