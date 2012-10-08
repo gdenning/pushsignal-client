@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.pushsignal.Constants;
 import com.pushsignal.NotificationHandler;
 import com.pushsignal.R;
+import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.rest.RestClient;
-import com.pushsignal.rest.RestClientStoredCredentials;
 import com.pushsignal.xml.simple.TriggerDTO;
 
 public class TriggerRespondActivity extends Activity {
@@ -33,7 +33,6 @@ public class TriggerRespondActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.trigger_respond);
 
-		final RestClient restClient = RestClientStoredCredentials.getInstance(this);
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		// Obtain handles to UI objects
@@ -51,37 +50,64 @@ public class TriggerRespondActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				Log.d(Constants.CLIENT_LOG_TAG, "mAcknowledgeButton clicked (Trigger:" + trigger.getTriggerId() + ")");
-				try {
-					restClient.ackTrigger(trigger.getTriggerId());
-					NotificationHandler.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
-					launchTriggerViewer(trigger);
-					finish();
-				} catch (Exception ex) {
-					NotificationHandler.showError(v.getContext(), ex);
-				}
+				new AckTriggerAsyncTask(v.getContext()).execute(trigger.getTriggerId());
 			}
 		});
 		mIgnoreButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
 				Log.d(Constants.CLIENT_LOG_TAG, "mIgnoreButton clicked (Trigger:" + trigger.getTriggerId() + ")");
-				try {
-					restClient.silenceTrigger(trigger.getTriggerId());
-					NotificationHandler.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
-					finish();
-				} catch (Exception ex) {
-					NotificationHandler.showError(v.getContext(), ex);
-				}
+				new SilenceTriggerAsyncTask(v.getContext()).execute(trigger.getTriggerId());
 			}
 		});
 	}
 
-    /**
-     * Launches the TriggerViewer activity to show information about a particular trigger.
-     */
-    private void launchTriggerViewer(TriggerDTO trigger) {
-        Intent i = new Intent(this, TriggerViewerActivity.class);
-        i.putExtra("triggerId", trigger.getTriggerId());
-        startActivity(i);
-    }
+	/**
+	 * Launches the TriggerViewer activity to show information about a
+	 * particular trigger.
+	 */
+	private void launchTriggerViewer(TriggerDTO trigger) {
+		Intent i = new Intent(this, TriggerViewerActivity.class);
+		i.putExtra("triggerId", trigger.getTriggerId());
+		startActivity(i);
+	}
+	
+	private class AckTriggerAsyncTask extends RestCallAsyncTask<Long> {
+
+		public AckTriggerAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			Long triggerId = params[0];
+			restClient.ackTrigger(triggerId);
+		}
+
+		@Override
+		protected void onSuccess(Context context) {
+			NotificationHandler.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
+			launchTriggerViewer(trigger);
+			finish();
+		}
+	}
+
+	private class SilenceTriggerAsyncTask extends RestCallAsyncTask<Long> {
+
+		public SilenceTriggerAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			Long triggerId = params[0];
+			restClient.silenceTrigger(triggerId);
+		}
+
+		@Override
+		protected void onSuccess(Context context) {
+			NotificationHandler.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
+			finish();
+		}
+	}
 }

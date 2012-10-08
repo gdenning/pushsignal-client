@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,12 +23,12 @@ import com.pushsignal.Constants;
 import com.pushsignal.NotificationHandler;
 import com.pushsignal.R;
 import com.pushsignal.TriggerPermissionEnum;
+import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.observers.AppObservable;
 import com.pushsignal.observers.ObserverData;
 import com.pushsignal.observers.ObserverData.ActionTypeEnum;
 import com.pushsignal.observers.ObserverData.ObjectTypeEnum;
 import com.pushsignal.rest.RestClient;
-import com.pushsignal.rest.RestClientStoredCredentials;
 import com.pushsignal.xml.simple.EventDTO;
 import com.pushsignal.xml.simple.EventMemberDTO;
 
@@ -51,8 +52,6 @@ public class EventEditorActivity extends Activity {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_editor);
-
-		final RestClient restClient = RestClientStoredCredentials.getInstance(this);
 
 		// Obtain handles to UI objects
 		mNameCaption = (TextView) findViewById(R.id.nameCaption);
@@ -122,36 +121,21 @@ public class EventEditorActivity extends Activity {
 				}
 				
 				// Execute event
-				final AppObservable notifier = AppObservable.getInstance();
 				if (event == null) {
 					// Create new event
-					try {
-						event = restClient.createEvent(eventName, mDescription.getText().toString(),
-								getTriggerPermission(), mPublicCheckBox.isChecked());
-						notifier.notifyObservers(new ObserverData(
-								ObjectTypeEnum.EVENT,
-								ActionTypeEnum.CREATED,
-								event));
-						launchEventViewer(event);
-						resetForm();
-					} catch (final Exception ex) {
-						event = null;
-						NotificationHandler.showError(EventEditorActivity.this, ex);
-					}
+					new CreateEventAsyncTask(EventEditorActivity.this).execute(
+							eventName,
+							mDescription.getText().toString(),
+							getTriggerPermission(),
+							mPublicCheckBox.isChecked());
 				} else {
 					// Modify existing event
-					try {
-						event = restClient.updateEvent(event.getEventId(), eventName, mDescription.getText().toString(),
-								getTriggerPermission(), mPublicCheckBox.isChecked());
-						notifier.notifyObservers(new ObserverData(
-								ObjectTypeEnum.EVENT,
-								ActionTypeEnum.MODIFIED,
-								event));
-						NotificationHandler.showInfo(EventEditorActivity.this, "Event updated successfully");
-						finish();
-					} catch (final Exception ex) {
-						NotificationHandler.showError(EventEditorActivity.this, ex);
-					}
+					new UpdateEventAsyncTask(EventEditorActivity.this).execute(
+							event.getEventId(),
+							eventName,
+							mDescription.getText().toString(),
+							getTriggerPermission(),
+							mPublicCheckBox.isChecked());
 				}
 			}
 		});
@@ -164,7 +148,7 @@ public class EventEditorActivity extends Activity {
 				if (mNameSpinner.getSelectedItem().equals("Custom")) {
 					eventName = mNameEditor.getText().toString();
 				} else {
-					eventName = (String) mNameSpinner.getSelectedItem();							
+					eventName = (String) mNameSpinner.getSelectedItem();
 				}
 			}
 		} else {
@@ -194,5 +178,66 @@ public class EventEditorActivity extends Activity {
 		final Intent i = new Intent(this, EventViewerActivity.class);
 		i.putExtra("event", event);
 		startActivity(i);
+	}
+	
+	private class CreateEventAsyncTask extends RestCallAsyncTask<Object> {
+		final AppObservable notifier = AppObservable.getInstance();
+
+		public CreateEventAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Object... params) throws Exception {
+			String eventName = (String) params[0];
+			String description = (String) params[1];
+			String triggerPermission = (String) params[2];
+			Boolean isPublic = (Boolean) params[3];
+			event = restClient.createEvent(eventName, description, triggerPermission, isPublic);
+		}
+
+		@Override
+		protected void onSuccess(Context context) {
+			notifier.notifyObservers(new ObserverData(
+					ObjectTypeEnum.EVENT,
+					ActionTypeEnum.CREATED,
+					event));
+			launchEventViewer(event);
+			resetForm();
+		}
+
+		@Override
+		protected void onException(Context context, Exception ex) {
+			event = null;
+			NotificationHandler.showError(context, ex);
+		}
+	}
+
+	private class UpdateEventAsyncTask extends RestCallAsyncTask<Object> {
+		final AppObservable notifier = AppObservable.getInstance();
+
+		public UpdateEventAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Object... params) throws Exception {
+			Long eventId = (Long) params[0];
+			String eventName = (String) params[1];
+			String description = (String) params[2];
+			String triggerPermission = (String) params[3];
+			Boolean isPublic = (Boolean) params[4];
+			event = restClient.updateEvent(eventId, eventName, description, triggerPermission, isPublic);
+		}
+
+		@Override
+		protected void onSuccess(Context context) {
+			notifier.notifyObservers(new ObserverData(
+					ObjectTypeEnum.EVENT,
+					ActionTypeEnum.MODIFIED,
+					event));
+			NotificationHandler.showInfo(EventEditorActivity.this, "Event updated successfully");
+			finish();
+		}
 	}
 }

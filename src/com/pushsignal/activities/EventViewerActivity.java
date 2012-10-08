@@ -7,6 +7,7 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,10 +31,10 @@ import com.pushsignal.AppUserDevice;
 import com.pushsignal.Constants;
 import com.pushsignal.NotificationHandler;
 import com.pushsignal.R;
+import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.observers.AppObservable;
 import com.pushsignal.observers.EventObserver;
 import com.pushsignal.rest.RestClient;
-import com.pushsignal.rest.RestClientStoredCredentials;
 import com.pushsignal.xml.simple.EventDTO;
 import com.pushsignal.xml.simple.EventMemberDTO;
 import com.pushsignal.xml.simple.TriggerDTO;
@@ -41,8 +42,6 @@ import com.pushsignal.xml.simple.UserDTO;
 
 public class EventViewerActivity extends Activity {
 	private static final int PICK_CONTACT_REQUEST = 0;
-
-	private RestClient restClient;
 
 	private EventDTO event;
 	private List<EventMemberDTO> eventMembers;
@@ -71,8 +70,6 @@ public class EventViewerActivity extends Activity {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_viewer);
-
-		restClient = RestClientStoredCredentials.getInstance(this);
 
 		// Obtain handles to UI objects
 		mEventName = (TextView) findViewById(R.id.eventName);
@@ -114,53 +111,50 @@ public class EventViewerActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    UserDTO userMe = AppUserDevice.getInstance().getUser();
-	    if (userMe == null) {
-	    	NotificationHandler.showError(this, "PushSignal did not register properly.  Unable to show event actions at this time.");
-	    	return false;
-	    }
-	    if (event.isMember(userMe)) {
-	    	inflater.inflate(R.menu.event_member_menu, menu);
-	    } else {
-	    	inflater.inflate(R.menu.event_non_member_menu, menu);
-	    }
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		UserDTO userMe = AppUserDevice.getInstance().getUser();
+		if (userMe == null) {
+			NotificationHandler.showError(this,
+					"PushSignal did not register properly.  Unable to show event actions at this time.");
+			return false;
+		}
+		if (event.isMember(userMe)) {
+			inflater.inflate(R.menu.event_member_menu, menu);
+		} else {
+			inflater.inflate(R.menu.event_non_member_menu, menu);
+		}
+		return true;
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    case R.id.join_event:
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.join_event:
 			Log.d(Constants.CLIENT_LOG_TAG, "join_event menu button clicked");
-			try {
-		    	restClient.joinEvent(event.getEventId());
-				NotificationHandler.showInfo(this, "Successfully joined event");
-			} catch (Exception ex) {
-				NotificationHandler.showError(this, ex);
-			}
-	    	return true;
-	    case R.id.edit_event:
+			new JoinEventAsyncTask(this).execute(event.getEventId());
+			return true;
+		case R.id.edit_event:
 			Log.d(Constants.CLIENT_LOG_TAG, "edit_event menu button clicked");
 			launchEventEditor(event);
-	        return true;
-	    case R.id.invite_friend:
+			return true;
+		case R.id.invite_friend:
 			Log.d(Constants.CLIENT_LOG_TAG, "invite_friend menu button clicked");
 			launchContactPicker();
-	        return true;
-	    case R.id.leave_delete_event:
-			Log.d(Constants.CLIENT_LOG_TAG, "leave_delete_event menu button clicked");
-			UserDTO userMe = AppUserDevice.getInstance().getUser(); 
+			return true;
+		case R.id.leave_delete_event:
+			Log.d(Constants.CLIENT_LOG_TAG,
+					"leave_delete_event menu button clicked");
+			UserDTO userMe = AppUserDevice.getInstance().getUser();
 			if (event.getOwner().equals(userMe)) {
 				showDeleteEventDialog();
 			} else {
 				showLeaveEventDialog();
 			}
-	        return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	private void showLeaveEventDialog() {
@@ -170,13 +164,7 @@ public class EventViewerActivity extends Activity {
 		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int id) {
-				try {
-					restClient.leaveEvent(event.getEventId());
-					NotificationHandler.showInfo(EventViewerActivity.this, "Left event successfully.");
-					finish();
-				} catch (final Exception ex) {
-					NotificationHandler.showError(EventViewerActivity.this, ex);
-				}
+				new LeaveEventAsyncTask(EventViewerActivity.this).execute(event.getEventId());
 			}
 		})
 		.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -195,13 +183,7 @@ public class EventViewerActivity extends Activity {
 		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int id) {
-				try {
-					restClient.deleteEvent(event.getEventId());
-					NotificationHandler.showInfo(EventViewerActivity.this, "Deleted event successfully.");
-					finish();
-				} catch (final Exception ex) {
-					NotificationHandler.showError(EventViewerActivity.this, ex);
-				}
+				new DeleteEventAsyncTask(EventViewerActivity.this).execute(event.getEventId());
 			}
 		})
 		.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -220,13 +202,7 @@ public class EventViewerActivity extends Activity {
 		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int id) {
-				try {
-					final TriggerDTO trigger = restClient.createTrigger(event.getEventId());
-					launchTriggerViewer(trigger);
-					finish();
-				} catch (final Exception ex) {
-					NotificationHandler.showError(EventViewerActivity.this, ex);
-				}
+				new CreateTriggerAsyncTask(EventViewerActivity.this).execute(event.getEventId());
 			}
 		})
 		.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -244,12 +220,7 @@ public class EventViewerActivity extends Activity {
 			if (resultCode == RESULT_OK) {
 				final Uri contactData = intent.getData();
 				for (final String emailAddress : getEmailAddressesForContact(contactData)) {
-					try {
-						restClient.createInvite(event.getEventId(), emailAddress);
-						NotificationHandler.showInfo(this, "Invite sent successfully.");
-					} catch (final Exception ex) {
-						NotificationHandler.showError(this, ex);
-					}
+					new CreateInviteAsyncTask(this).execute(event.getEventId(), emailAddress);
 				}
 			}
 		}
@@ -326,6 +297,103 @@ public class EventViewerActivity extends Activity {
 			return millisecondsAgo / 3600000 + " hours ago";
 		} else {
 			return millisecondsAgo / 86400000 + " days ago";
+		}
+	}
+
+	private class LeaveEventAsyncTask extends RestCallAsyncTask<Long> {
+		
+		public LeaveEventAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			Long eventId = params[0];
+			restClient.leaveEvent(eventId);
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			NotificationHandler.showInfo(context, "Left event successfully.");
+			finish();
+		}
+	}
+
+	private class DeleteEventAsyncTask extends RestCallAsyncTask<Long> {
+		
+		public DeleteEventAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			Long eventId = params[0];
+			restClient.deleteEvent(eventId);
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			NotificationHandler.showInfo(context, "Deleted event successfully.");
+			finish();
+		}
+	}
+
+	private class JoinEventAsyncTask extends RestCallAsyncTask<Long> {
+		
+		public JoinEventAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			Long eventId = params[0];
+			restClient.joinEvent(eventId);
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			NotificationHandler.showInfo(context, "Successfully joined event.");
+			finish();
+		}
+	}
+
+	private class CreateTriggerAsyncTask extends RestCallAsyncTask<Long> {
+		
+		private TriggerDTO trigger;
+		
+		public CreateTriggerAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			Long eventId = params[0];
+			trigger = restClient.createTrigger(eventId);
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			launchTriggerViewer(trigger);
+			finish();
+		}
+	}
+
+	private class CreateInviteAsyncTask extends RestCallAsyncTask<Object> {
+		
+		public CreateInviteAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Object... params) throws Exception {
+			Long eventId = (Long) params[0];
+			String emailAddress = (String) params[1];
+			restClient.createInvite(eventId, emailAddress);
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			NotificationHandler.showInfo(context, "Invite sent successfully.");
 		}
 	}
 }

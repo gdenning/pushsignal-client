@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import com.pushsignal.Constants;
 import com.pushsignal.NotificationHandler;
 import com.pushsignal.R;
 import com.pushsignal.adapters.ActivityListAdapter;
+import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.observers.AppObservable;
 import com.pushsignal.observers.ActivityListObserver;
 import com.pushsignal.observers.ObserverData;
@@ -59,7 +61,7 @@ public class ActivityListActivity extends Activity {
 		public void handleMessage(final Message msg) {
 			adapter = new ActivityListAdapter(ActivityListActivity.this, R.layout.activity_list_item, activityList, getLayoutInflater());
 			activityListView.setAdapter(adapter);
-            AppObservable.getInstance().addObserver(new ActivityListObserver(handleActivitiesChanged, activityList));
+			AppObservable.getInstance().addObserver(new ActivityListObserver(handleActivitiesChanged, activityList));
 			dismissDialog(PROGRESS_DIALOG);
 		}
 	};
@@ -96,30 +98,19 @@ public class ActivityListActivity extends Activity {
 					AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
 					builder.setTitle("Invitation to " + invite.getEvent().getName() + ":");
 					builder.setItems(dialogOptions, new DialogInterface.OnClickListener() {
-					    public void onClick(DialogInterface dialog, int item) {
-							final RestClient restClient = RestClientStoredCredentials.getInstance(ActivityListActivity.this);
-					    	switch (item) {
-					    	case 0: // Accept
-					    		try {
-									restClient.acceptInvite(invite.getEventInviteId());
-									AppObservable.getInstance().notifyObservers(new ObserverData(ObjectTypeEnum.EVENT_INVITE, ActionTypeEnum.DELETED, invite.getEventInviteId()));
-								} catch (Exception ex) {
-									NotificationHandler.showError(view.getContext(), ex);
-								}
-					    		break;
-					    	case 1: // Decline
-					    		try {
-									restClient.declineInvite(invite.getEventInviteId());
-									AppObservable.getInstance().notifyObservers(new ObserverData(ObjectTypeEnum.EVENT_INVITE, ActionTypeEnum.DELETED, invite.getEventInviteId()));
-								} catch (Exception ex) {
-									NotificationHandler.showError(view.getContext(), ex);
-								}
-					    		break;
-					    	case 2: // Cancel
-					    		break;
-					    	}
-					    	dialog.dismiss();
-					    }
+						public void onClick(DialogInterface dialog, int item) {
+							switch (item) {
+							case 0: // Accept
+								new AcceptInviteAsyncTask(view.getContext()).execute(invite.getEventInviteId());
+								break;
+							case 1: // Decline
+								new DeclineInviteAsyncTask(view.getContext()).execute(invite.getEventInviteId());
+								break;
+							case 2: // Cancel
+								break;
+							}
+							dialog.dismiss();
+						}
 					});
 					builder.show();
 				}
@@ -134,20 +125,20 @@ public class ActivityListActivity extends Activity {
 
 		// Create a separate thread to retrieve activities
 		final Thread t = new Thread() {
-            public void run() {
-        		try {
-        			activityList = generateActivityTupleList(
-        					restClient.getAllInvites().getEventInvites(),
-        					restClient.getAllActivities().getActivities());
-            		handleActivitiesLoaded.sendEmptyMessage(0);
-        		} catch (final Exception ex) {
-        			handleError.sendMessage(Message.obtain(handleError, 0, ex));
-        		}
-            }
-        };
-        t.start();
+			public void run() {
+				try {
+					activityList = generateActivityTupleList(
+							restClient.getAllInvites().getEventInvites(),
+							restClient.getAllActivities().getActivities());
+					handleActivitiesLoaded.sendEmptyMessage(0);
+				} catch (final Exception ex) {
+					handleError.sendMessage(Message.obtain(handleError, 0, ex));
+				}
+			}
+		};
+		t.start();
 
-        // Show progress dialog
+		// Show progress dialog
 		showDialog(PROGRESS_DIALOG);
 	}
 	
@@ -164,33 +155,73 @@ public class ActivityListActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-    	inflater.inflate(R.menu.refresh_menu, menu);
-	    return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    case R.id.refresh:
-			Log.d(Constants.CLIENT_LOG_TAG, "refresh menu button clicked");
-			refreshList();
-	    	return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.refresh_menu, menu);
+		return true;
 	}
 
-    protected Dialog onCreateDialog(int id) {
-        switch(id) {
-        case PROGRESS_DIALOG:
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Loading activities...");
-            return progressDialog;
-        default:
-            return null;
-        }
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.refresh:
+			Log.d(Constants.CLIENT_LOG_TAG, "refresh menu button clicked");
+			refreshList();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case PROGRESS_DIALOG:
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("Loading activities...");
+			return progressDialog;
+		default:
+			return null;
+		}
+	}
+
+	private class AcceptInviteAsyncTask extends RestCallAsyncTask<Long> {
+		
+		private Long eventInviteId;
+		
+		public AcceptInviteAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			eventInviteId = params[0];
+			restClient.acceptInvite(eventInviteId);
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			AppObservable.getInstance().notifyObservers(new ObserverData(ObjectTypeEnum.EVENT_INVITE, ActionTypeEnum.DELETED, eventInviteId));
+		}
+	}
+
+	private class DeclineInviteAsyncTask extends RestCallAsyncTask<Long> {
+		
+		private Long eventInviteId;
+		
+		public DeclineInviteAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
+			eventInviteId = params[0];
+			restClient.declineInvite(eventInviteId);
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			AppObservable.getInstance().notifyObservers(new ObserverData(ObjectTypeEnum.EVENT_INVITE, ActionTypeEnum.DELETED, eventInviteId));
+		}
+	}
 }

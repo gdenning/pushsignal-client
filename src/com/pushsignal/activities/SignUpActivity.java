@@ -1,6 +1,7 @@
 package com.pushsignal.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,10 +12,9 @@ import android.widget.EditText;
 
 import com.pushsignal.AppUserDevice;
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
 import com.pushsignal.R;
+import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.rest.RestClient;
-import com.pushsignal.rest.RestClientStoredCredentials;
 import com.pushsignal.xml.simple.UserDTO;
 
 public class SignUpActivity extends Activity {
@@ -42,25 +42,9 @@ public class SignUpActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				Log.d(Constants.CLIENT_LOG_TAG, "mCreateAccountButton clicked");
-				try {
-					final RestClient restClient = RestClientStoredCredentials.getInstance();
-					final UserDTO user = restClient.createAccount(
-							mEmail.getText().toString(),
-							mName.getText().toString(),
-							"");
-
-					// Save email and password in SharedPreferences
-					final SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
-					final SharedPreferences.Editor editor = settings.edit();
-					editor.putString("email", mEmail.getText().toString());
-					editor.putString("password", user.getPassword());
-					editor.commit();
-					
-					launchMain();
-					finish();
-				} catch (final Exception ex) {
-					NotificationHandler.showError(v.getContext(), ex);
-				}
+				new SignupAsyncTask(v.getContext()).execute(
+						mEmail.getText().toString(),
+						mName.getText().toString());
 			}
 		});
 
@@ -88,5 +72,35 @@ public class SignUpActivity extends Activity {
 	private void launchLogIn() {
 		final Intent i = new Intent(this, LogInActivity.class);
 		startActivity(i);
+	}
+
+	private final class SignupAsyncTask extends RestCallAsyncTask<String> {
+		private UserDTO user;
+		private String email;
+		private String name;
+		
+		private SignupAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void doRestCall(RestClient restClient, String... params) throws Exception {
+			email = params[0];
+			name = params[1];
+			user = restClient.createAccount(email, name, "");
+		}
+
+		@Override
+		protected void onSuccess(final Context context) {
+			// Save email and password in SharedPreferences
+			final SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
+			final SharedPreferences.Editor editor = settings.edit();
+			editor.putString("email", email);
+			editor.putString("password", user.getPassword());
+			editor.commit();
+			
+			launchMain();
+			finish();
+		}
 	}
 }
