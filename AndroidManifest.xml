@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.pushsignal" android:versionCode="12" android:versionName="2.00" android:installLocation="auto">
+	package="com.pushsignal" android:versionCode="13" android:versionName="2.01" android:installLocation="auto">
 
 	<!-- C2DM functionality was added in SDK version 8 -->
 	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />n
@@ -23,7 +23,7 @@
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 	
 	<!-- To enable debugging, add this attribute: android:debuggable="true" -->
-	<application android:label="@string/app_name" android:icon="@drawable/launcher" android:theme="@android:style/Theme.Light">
+	<application android:label="@string/app_name" android:icon="@drawable/launcher">
 		<service android:name=".services.PushSignalService"
 			android:label="@string/service_name" android:icon="@drawable/launcher">
 		</service>
@@ -35,8 +35,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".activities.MainActivity"
-			android:label="@string/app_name" android:theme="@android:style/Theme.Light.NoTitleBar" />
+		<activity android:name=".activities.MainActivity" android:label="@string/app_name"/>
 		<activity android:name=".activities.EventViewerActivity"/>
 		<activity android:name=".activities.EventEditorActivity"/>
 		<activity android:name=".activities.EventListActivity"/>
