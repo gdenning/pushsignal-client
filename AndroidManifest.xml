@@ -5,22 +5,30 @@
 	<!-- C2DM functionality was added in SDK version 8 -->
 	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />n
 	
+	<!-- App sends and receives GCM messages. -->
 	<permission android:name="com.pushsignal.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-	
 	<uses-permission android:name="com.pushsignal.permission.C2D_MESSAGE" />
 	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<!-- GCM connects to Google Services. -->
 	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.VIBRATE" />
-	<uses-permission android:name="android.permission.READ_CONTACTS" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+	<!-- GCM requires a Google account. -->
 	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+	<!-- Keeps the processor from sleeping when a message is received. -->
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<!-- Vibrate when notification is received (optional). -->
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<!-- Default to user's email address when logging in. -->
+	<uses-permission android:name="android.permission.READ_CONTACTS" />
+	<!-- Allow service to start automatically at boot time. -->
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 	
 	<!-- To enable debugging, add this attribute: android:debuggable="true" -->
 	<application android:label="@string/app_name" android:icon="@drawable/launcher" android:theme="@android:style/Theme.Light">
 		<service android:name=".services.PushSignalService"
 			android:label="@string/service_name" android:icon="@drawable/launcher">
 		</service>
+		<service android:name=".push.PushClientGcmImpl" />
+
 		<activity android:name=".activities.InitialActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -28,8 +36,7 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".activities.MainActivity"
-			android:label="@string/app_name" android:theme="@android:style/Theme.Light.NoTitleBar">
-		</activity>
+			android:label="@string/app_name" android:theme="@android:style/Theme.Light.NoTitleBar" />
 		<activity android:name=".activities.EventViewerActivity"/>
 		<activity android:name=".activities.EventEditorActivity"/>
 		<activity android:name=".activities.EventListActivity"/>
@@ -40,21 +47,14 @@
 		<activity android:name=".activities.LogInActivity"/>
 		<activity android:name=".activities.SignUpActivity"/>
 		
-		<!-- Only GCM servers can send messages for the app. If permission is not set - any other app can generate it --> 
-		<receiver android:name=".push.PushClientGcmImpl"
-			android:permission="com.google.android.c2dm.permission.SEND">
-		    <!-- Receive the actual message -->
-		    <intent-filter>
-		        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-		        <category android:name="com.pushsignal" />
-		    </intent-filter>
-		    <!-- Receive the registration id -->
-		    <intent-filter>
-		        <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-		        <category android:name="com.pushsignal" />
-		    </intent-filter>
+		<receiver android:name="com.pushsignal.push.PushSignalGcmBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND" >
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+				<category android:name="com.pushsignal" />
+			</intent-filter>
 		</receiver>
-
+		
 		<!-- Start service at boot time -->
 		<receiver android:name=".receivers.BootReceiver">
 			<intent-filter>
