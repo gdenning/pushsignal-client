@@ -31,6 +31,11 @@ public class PushClientGcmImpl extends GCMBaseIntentService implements PushClien
 			GCMRegistrar.register(context, APP_SENDER_ID);
 		} else {
 			Log.v(Constants.CLIENT_LOG_TAG, "Already registered");
+			final ObserverData observerData = new ObserverData(
+					ObjectTypeEnum.SERVER_REGISTRATION_ID,
+					null,
+					regId);
+			appObservable.notifyObservers(observerData);
 		}
 	}
 
