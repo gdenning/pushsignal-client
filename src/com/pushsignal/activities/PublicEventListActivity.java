@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,10 +24,10 @@ import com.pushsignal.Constants;
 import com.pushsignal.NotificationHandler;
 import com.pushsignal.R;
 import com.pushsignal.adapters.EventListAdapter;
+import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.observers.AppObservable;
 import com.pushsignal.observers.PublicEventListObserver;
 import com.pushsignal.rest.RestClient;
-import com.pushsignal.rest.RestClientStoredCredentials;
 import com.pushsignal.xml.simple.EventDTO;
 
 public class PublicEventListActivity extends Activity {
@@ -84,67 +85,80 @@ public class PublicEventListActivity extends Activity {
 			}
 		});
 
-		refreshList();
+		new RefreshListAsyncTask(this).execute();
 	}
 
-	private void refreshList() {
-		final RestClient restClient = RestClientStoredCredentials.getInstance(this);
-
-		// Create a separate thread to retrieve events
-		final Thread t = new Thread() {
-            public void run() {
-        		try {
-        			eventList = new ArrayList<EventDTO>(restClient.getPublicEvents().getEvents());
-            		handleEventsLoaded.sendEmptyMessage(0);
-        		} catch (final Exception ex) {
-        			handleError.sendMessage(Message.obtain(handleError, 0, ex));
-        		}
-            }
-        };
-        t.start();
-
-        // Show progress dialog
-		showDialog(PROGRESS_DIALOG);
+	protected Dialog onCreateDialog(int id) {
+		switch(id) {
+		case PROGRESS_DIALOG:
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("Loading public events...");
+			return progressDialog;
+		default:
+			return null;
+		}
 	}
-
-    protected Dialog onCreateDialog(int id) {
-        switch(id) {
-        case PROGRESS_DIALOG:
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("Loading public events...");
-            return progressDialog;
-        default:
-            return null;
-        }
-    }
-    
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-    	inflater.inflate(R.menu.refresh_menu, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.refresh_menu, menu);
+		return true;
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    case R.id.refresh:
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.refresh:
 			Log.d(Constants.CLIENT_LOG_TAG, "refresh menu button clicked");
-			refreshList();
-	    	return true;
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
+			new RefreshListAsyncTask(this).execute();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	/**
-     * Launches the EventViewer activity to show information about a particular event.
-     */
-    private void launchEventViewer(EventDTO event) {
-        Intent i = new Intent(this, EventViewerActivity.class);
-        i.putExtra("event", event);
-        startActivity(i);
-    }
+	 * Launches the EventViewer activity to show information about a particular event.
+	 */
+	private void launchEventViewer(EventDTO event) {
+		Intent i = new Intent(this, EventViewerActivity.class);
+		i.putExtra("event", event);
+		startActivity(i);
+	}
+
+	private class RefreshListAsyncTask extends RestCallAsyncTask<Void> {
+		
+		public RefreshListAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// Show progress dialog
+			showDialog(PROGRESS_DIALOG);
+		}
+		
+		@Override
+		protected void doRestCall(RestClient restClient, Void... params) throws Exception {
+			eventList = new ArrayList<EventDTO>(restClient.getPublicEvents().getEvents());
+		}
+
+		@Override
+		protected void onSuccess(Context context) {
+			adapter = new EventListAdapter(context, R.layout.event_list_item, eventList, getLayoutInflater());
+			eventListView.setAdapter(adapter);
+			AppObservable.getInstance().addObserver(new PublicEventListObserver(handleEventsChanged, eventList));
+			dismissDialog(PROGRESS_DIALOG);
+		}
+		
+		@Override
+		protected void onException(Context context, Exception ex) {
+			Log.e(Constants.CLIENT_LOG_TAG, ex.getMessage());
+			NotificationHandler.showError(context, ex.getMessage());
+			dismissDialog(PROGRESS_DIALOG);
+		}
+	}
 }

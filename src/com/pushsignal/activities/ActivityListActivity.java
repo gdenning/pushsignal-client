@@ -28,13 +28,12 @@ import com.pushsignal.NotificationHandler;
 import com.pushsignal.R;
 import com.pushsignal.adapters.ActivityListAdapter;
 import com.pushsignal.asynctasks.RestCallAsyncTask;
-import com.pushsignal.observers.AppObservable;
 import com.pushsignal.observers.ActivityListObserver;
+import com.pushsignal.observers.AppObservable;
 import com.pushsignal.observers.ObserverData;
 import com.pushsignal.observers.ObserverData.ActionTypeEnum;
 import com.pushsignal.observers.ObserverData.ObjectTypeEnum;
 import com.pushsignal.rest.RestClient;
-import com.pushsignal.rest.RestClientStoredCredentials;
 import com.pushsignal.xml.simple.ActivityDTO;
 import com.pushsignal.xml.simple.EventInviteDTO;
 
@@ -53,24 +52,6 @@ public class ActivityListActivity extends Activity {
 		@Override
 		public void handleMessage(final Message msg) {
 			adapter.notifyDataSetChanged();
-		}
-	};
-
-	private final Handler handleActivitiesLoaded = new Handler() {
-		@Override
-		public void handleMessage(final Message msg) {
-			adapter = new ActivityListAdapter(ActivityListActivity.this, R.layout.activity_list_item, activityList, getLayoutInflater());
-			activityListView.setAdapter(adapter);
-			AppObservable.getInstance().addObserver(new ActivityListObserver(handleActivitiesChanged, activityList));
-			dismissDialog(PROGRESS_DIALOG);
-		}
-	};
-	
-	private final Handler handleError = new Handler() {
-		@Override
-		public void handleMessage(final Message msg) {
-			NotificationHandler.showError(ActivityListActivity.this, (Exception) msg.obj);
-			dismissDialog(PROGRESS_DIALOG);
 		}
 	};
 
@@ -117,29 +98,7 @@ public class ActivityListActivity extends Activity {
 			}
 		});
 		
-		refreshList();
-	}
-	
-	private void refreshList() {
-		final RestClient restClient = RestClientStoredCredentials.getInstance(this);
-
-		// Create a separate thread to retrieve activities
-		final Thread t = new Thread() {
-			public void run() {
-				try {
-					activityList = generateActivityTupleList(
-							restClient.getAllInvites().getEventInvites(),
-							restClient.getAllActivities().getActivities());
-					handleActivitiesLoaded.sendEmptyMessage(0);
-				} catch (final Exception ex) {
-					handleError.sendMessage(Message.obtain(handleError, 0, ex));
-				}
-			}
-		};
-		t.start();
-
-		// Show progress dialog
-		showDialog(PROGRESS_DIALOG);
+		new RefreshListAsyncTask(this).execute();
 	}
 	
 	private List<Pair<EventInviteDTO, ActivityDTO>> generateActivityTupleList(Set<EventInviteDTO> invites, Set<ActivityDTO> activities) {
@@ -166,7 +125,7 @@ public class ActivityListActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.refresh:
 			Log.d(Constants.CLIENT_LOG_TAG, "refresh menu button clicked");
-			refreshList();
+			new RefreshListAsyncTask(this).execute();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -222,6 +181,41 @@ public class ActivityListActivity extends Activity {
 		@Override
 		protected void onSuccess(final Context context) {
 			AppObservable.getInstance().notifyObservers(new ObserverData(ObjectTypeEnum.EVENT_INVITE, ActionTypeEnum.DELETED, eventInviteId));
+		}
+	}
+
+	private class RefreshListAsyncTask extends RestCallAsyncTask<Void> {
+		
+		public RefreshListAsyncTask(final Context context) {
+			super(context);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// Show progress dialog
+			showDialog(PROGRESS_DIALOG);
+		}
+		
+		@Override
+		protected void doRestCall(RestClient restClient, Void... params) throws Exception {
+			activityList = generateActivityTupleList(
+					restClient.getAllInvites().getEventInvites(),
+					restClient.getAllActivities().getActivities());
+		}
+
+		@Override
+		protected void onSuccess(Context context) {
+			adapter = new ActivityListAdapter(context, R.layout.activity_list_item, activityList, getLayoutInflater());
+			activityListView.setAdapter(adapter);
+			AppObservable.getInstance().addObserver(new ActivityListObserver(handleActivitiesChanged, activityList));
+			dismissDialog(PROGRESS_DIALOG);
+		}
+		
+		@Override
+		protected void onException(Context context, Exception ex) {
+			Log.e(Constants.CLIENT_LOG_TAG, ex.getMessage());
+			NotificationHandler.showError(context, ex.getMessage());
+			dismissDialog(PROGRESS_DIALOG);
 		}
 	}
 }
