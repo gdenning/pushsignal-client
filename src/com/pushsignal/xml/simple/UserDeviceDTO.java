@@ -23,13 +23,13 @@ public class UserDeviceDTO implements Serializable {
 
 	@Element
 	private String registrationId;
-	
+
 	@Element
 	private long serverMillisecondsSince1970;
-	
+
 	private long clientMillisecondsSinceBoot;
-	
-	public void setUserDeviceId(long userDeviceId) {
+
+	public void setUserDeviceId(final long userDeviceId) {
 		this.userDeviceId = userDeviceId;
 	}
 
@@ -37,7 +37,7 @@ public class UserDeviceDTO implements Serializable {
 		return userDeviceId;
 	}
 
-	public void setUser(UserDTO user) {
+	public void setUser(final UserDTO user) {
 		this.user = user;
 	}
 
@@ -45,7 +45,7 @@ public class UserDeviceDTO implements Serializable {
 		return user;
 	}
 
-	public void setDeviceType(String deviceType) {
+	public void setDeviceType(final String deviceType) {
 		this.deviceType = deviceType;
 	}
 
@@ -53,7 +53,7 @@ public class UserDeviceDTO implements Serializable {
 		return deviceType;
 	}
 
-	public void setDeviceId(String deviceId) {
+	public void setDeviceId(final String deviceId) {
 		this.deviceId = deviceId;
 	}
 
@@ -61,7 +61,7 @@ public class UserDeviceDTO implements Serializable {
 		return deviceId;
 	}
 
-	public void setRegistrationId(String registrationId) {
+	public void setRegistrationId(final String registrationId) {
 		this.registrationId = registrationId;
 	}
 
@@ -69,7 +69,7 @@ public class UserDeviceDTO implements Serializable {
 		return registrationId;
 	}
 
-	public void setServerMillisecondsSince1970(long serverMillisecondsSince1970) {
+	public void setServerMillisecondsSince1970(final long serverMillisecondsSince1970) {
 		this.serverMillisecondsSince1970 = serverMillisecondsSince1970;
 	}
 
@@ -77,7 +77,7 @@ public class UserDeviceDTO implements Serializable {
 		return serverMillisecondsSince1970;
 	}
 
-	public void setClientMillisecondsSinceBoot(long clientMillisecondsSinceBoot) {
+	public void setClientMillisecondsSinceBoot(final long clientMillisecondsSinceBoot) {
 		this.clientMillisecondsSinceBoot = clientMillisecondsSinceBoot;
 	}
 

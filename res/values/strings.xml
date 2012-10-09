@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Push Signal</string>
     <string name="service_name">Push Signal Service</string>
-    <string name="c2dm_service_name">Push Signal C2DM Service</string>
     <string name="edit_event">Edit Event</string>
     <string name="invite_friend">Invite Friend</string>
     <string name="leave_delete_event">Leave/Delete</string>

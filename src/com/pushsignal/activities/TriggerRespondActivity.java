@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
+import com.pushsignal.NotificationDisplay;
 import com.pushsignal.R;
 import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.rest.RestClient;
@@ -34,7 +34,7 @@ public class TriggerRespondActivity extends Activity {
 		setContentView(R.layout.trigger_respond);
 
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		
+
 		// Obtain handles to UI objects
 		mEventName = (TextView) findViewById(R.id.eventName);
 		mDescription = (TextView) findViewById(R.id.eventDescription);
@@ -44,7 +44,7 @@ public class TriggerRespondActivity extends Activity {
 		trigger = (TriggerDTO) getIntent().getExtras().getSerializable("trigger");
 		mEventName.setText(trigger.getEvent().getName());
 		mDescription.setText(trigger.getEvent().getDescription());
-	
+
 		// Register handler for UI elements
 		mAcknowledgeButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -66,12 +66,12 @@ public class TriggerRespondActivity extends Activity {
 	 * Launches the TriggerViewer activity to show information about a
 	 * particular trigger.
 	 */
-	private void launchTriggerViewer(TriggerDTO trigger) {
-		Intent i = new Intent(this, TriggerViewerActivity.class);
+	private void launchTriggerViewer(final TriggerDTO trigger) {
+		final Intent i = new Intent(this, TriggerViewerActivity.class);
 		i.putExtra("triggerId", trigger.getTriggerId());
 		startActivity(i);
 	}
-	
+
 	private class AckTriggerAsyncTask extends RestCallAsyncTask<Long> {
 
 		public AckTriggerAsyncTask(final Context context) {
@@ -79,14 +79,14 @@ public class TriggerRespondActivity extends Activity {
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
-			Long triggerId = params[0];
+		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
+			final Long triggerId = params[0];
 			restClient.ackTrigger(triggerId);
 		}
 
 		@Override
-		protected void onSuccess(Context context) {
-			NotificationHandler.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
+		protected void onSuccess(final Context context) {
+			NotificationDisplay.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
 			launchTriggerViewer(trigger);
 			finish();
 		}
@@ -99,14 +99,14 @@ public class TriggerRespondActivity extends Activity {
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
-			Long triggerId = params[0];
+		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
+			final Long triggerId = params[0];
 			restClient.silenceTrigger(triggerId);
 		}
 
 		@Override
-		protected void onSuccess(Context context) {
-			NotificationHandler.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
+		protected void onSuccess(final Context context) {
+			NotificationDisplay.cancelTriggerNotification(notificationManager, trigger.getTriggerId());
 			finish();
 		}
 	}

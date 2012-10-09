@@ -36,7 +36,7 @@ public class SignUpActivity extends Activity {
 		mExistingAccountButton = (Button) findViewById(R.id.existingAccountButton);
 
 		mEmail.setText(AppUserDevice.getInstance().getGoogleUsername(this));
-		
+
 		// Register handler for UI elements
 		mCreateAccountButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -78,13 +78,13 @@ public class SignUpActivity extends Activity {
 		private UserDTO user;
 		private String email;
 		private String name;
-		
+
 		private SignupAsyncTask(final Context context) {
 			super(context);
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, String... params) throws Exception {
+		protected void doRestCall(final RestClient restClient, final String... params) throws Exception {
 			email = params[0];
 			name = params[1];
 			user = restClient.createAccount(email, name, "");
@@ -98,7 +98,7 @@ public class SignUpActivity extends Activity {
 			editor.putString("email", email);
 			editor.putString("password", user.getPassword());
 			editor.commit();
-			
+
 			launchMain();
 			finish();
 		}

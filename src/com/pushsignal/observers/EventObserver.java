@@ -8,8 +8,8 @@ import android.os.Handler;
 import com.pushsignal.xml.simple.EventDTO;
 
 public class EventObserver implements Observer {
-	private Handler handler;
-	private EventDTO event;
+	private final Handler handler;
+	private final EventDTO event;
 
 	public EventObserver(final Handler handler, final EventDTO event) {
 		this.handler = handler;

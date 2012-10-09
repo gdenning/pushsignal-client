@@ -14,8 +14,8 @@ import com.pushsignal.xml.simple.ActivityDTO;
 import com.pushsignal.xml.simple.EventInviteDTO;
 
 public class ActivityListObserver implements Observer {
-	private Handler handler;
-	private List<Pair<EventInviteDTO, ActivityDTO>> activities;
+	private final Handler handler;
+	private final List<Pair<EventInviteDTO, ActivityDTO>> activities;
 
 	public ActivityListObserver(final Handler handler, final List<Pair<EventInviteDTO, ActivityDTO>> activities) {
 		this.handler = handler;

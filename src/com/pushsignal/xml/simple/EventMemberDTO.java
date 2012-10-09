@@ -11,11 +11,11 @@ public class EventMemberDTO implements Serializable {
 
 	@Element
 	private long eventMemberId;
-	
+
 	@Element
 	private UserDTO user;
 
-	public void setEventMemberId(long eventMemberId) {
+	public void setEventMemberId(final long eventMemberId) {
 		this.eventMemberId = eventMemberId;
 	}
 
@@ -23,14 +23,14 @@ public class EventMemberDTO implements Serializable {
 		return eventMemberId;
 	}
 
-	public void setUser(UserDTO user) {
+	public void setUser(final UserDTO user) {
 		this.user = user;
 	}
 
 	public UserDTO getUser() {
 		return user;
 	}
-	
+
 	@Override
 	public String toString() {
 		return user.getName();

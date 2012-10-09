@@ -9,8 +9,8 @@ import org.simpleframework.xml.Root;
 public class EventInviteSetDTO {
 	@ElementList(required=false, inline=true)
 	private LinkedHashSet<EventInviteDTO> eventInvites;
-	
-	public void setEventInvites(LinkedHashSet<EventInviteDTO> eventInvites) {
+
+	public void setEventInvites(final LinkedHashSet<EventInviteDTO> eventInvites) {
 		this.eventInvites = eventInvites;
 	}
 

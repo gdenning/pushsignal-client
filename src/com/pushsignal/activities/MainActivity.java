@@ -17,22 +17,22 @@ import com.pushsignal.observers.ObserverData.ObjectTypeEnum;
 import com.pushsignal.services.PushSignalService;
 
 public class MainActivity extends TabActivity {
-	
+
 	private TextView usernameTextView;
 	private TextView pointsTextView;
-	
+
 	private final Handler handleDeviceRegistered = new Handler() {
 		@Override
 		public void handleMessage(final Message msg) {
-	        displayStatusBar();
+			displayStatusBar();
 		}
 	};
 
 	private void displayStatusBar() {
 		usernameTextView = (TextView) findViewById(R.id.username);
 		pointsTextView = (TextView) findViewById(R.id.points);
-		
-		AppUserDevice appUserDevice = AppUserDevice.getInstance();
+
+		final AppUserDevice appUserDevice = AppUserDevice.getInstance();
 		if (appUserDevice != null && appUserDevice.getUser() != null) {
 			usernameTextView.setText(appUserDevice.getUser().getName());
 			pointsTextView.setText(appUserDevice.getUser().getPoints() + " points");
@@ -43,13 +43,13 @@ public class MainActivity extends TabActivity {
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
-		AppUserDevice appUserDevice = AppUserDevice.getInstance();
+
+		final AppUserDevice appUserDevice = AppUserDevice.getInstance();
 		if (appUserDevice != null && appUserDevice.getUser() != null) {
 			displayStatusBar();
 		}
-			
-        AppObservable.getInstance().addObserver(new BasicObserver(handleDeviceRegistered, ObjectTypeEnum.USER_DEVICE));
+
+		AppObservable.getInstance().addObserver(new BasicObserver(handleDeviceRegistered, ObjectTypeEnum.USER_DEVICE));
 
 		final Resources res = getResources(); // Resource object to get Drawables
 		final TabHost tabHost = getTabHost();  // The activity TabHost
@@ -59,29 +59,29 @@ public class MainActivity extends TabActivity {
 		// Initialize create event tab
 		intent = new Intent().setClass(this, EventEditorActivity.class);
 		spec = tabHost.newTabSpec("create")
-					.setIndicator("Create", res.getDrawable(R.drawable.ic_tab_signal))
-					.setContent(intent);
+				.setIndicator("Create", res.getDrawable(R.drawable.ic_tab_signal))
+				.setContent(intent);
 		tabHost.addTab(spec);
 
 		// Initialize event list tab
 		intent = new Intent().setClass(this, EventListActivity.class);
 		spec = tabHost.newTabSpec("eventList")
-					.setIndicator("Events", res.getDrawable(R.drawable.ic_tab_tags))
-					.setContent(intent);
+				.setIndicator("Events", res.getDrawable(R.drawable.ic_tab_tags))
+				.setContent(intent);
 		tabHost.addTab(spec);
 
 		// Initialize public events tab
 		intent = new Intent().setClass(this, PublicEventListActivity.class);
 		spec = tabHost.newTabSpec("publicList")
-					.setIndicator("Public", res.getDrawable(R.drawable.ic_tab_planet))
-					.setContent(intent);
+				.setIndicator("Public", res.getDrawable(R.drawable.ic_tab_planet))
+				.setContent(intent);
 		tabHost.addTab(spec);
 
 		// Initialize activities tab
 		intent = new Intent().setClass(this, ActivityListActivity.class);
 		spec = tabHost.newTabSpec("activityList")
-					.setIndicator("Activity", res.getDrawable(R.drawable.ic_tab_happy))
-					.setContent(intent);
+				.setIndicator("Activity", res.getDrawable(R.drawable.ic_tab_happy))
+				.setContent(intent);
 		tabHost.addTab(spec);
 
 		tabHost.setCurrentTab(0);
@@ -90,13 +90,14 @@ public class MainActivity extends TabActivity {
 		startService();
 	}
 
-    private void startService() {
+	private void startService() {
 		final Thread t = new Thread() {
-            public void run() {
-        		Intent i = new Intent(MainActivity.this, PushSignalService.class);
-        		startService(i);
-            }
-        };
-        t.start();
+			@Override
+			public void run() {
+				final Intent i = new Intent(MainActivity.this, PushSignalService.class);
+				startService(i);
+			}
+		};
+		t.start();
 	}
 }

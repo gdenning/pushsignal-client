@@ -15,7 +15,7 @@ import com.pushsignal.xml.simple.EventDTO;
 
 public class EventListAdapter extends ArrayAdapter<EventDTO> {
 
-	private LayoutInflater inflater;
+	private final LayoutInflater inflater;
 
 	public EventListAdapter(final Context context, final int textViewResourceId, final List<EventDTO> items, final LayoutInflater inflater) {
 		super(context, textViewResourceId, items);
@@ -35,15 +35,15 @@ public class EventListAdapter extends ArrayAdapter<EventDTO> {
 			final TextView eventMemberCount = (TextView) row.findViewById(R.id.eventMemberCount);
 			final TextView eventName = (TextView) row.findViewById(R.id.eventName);
 			if (event.isPublicFlag()) {
-				eventImage.setImageResource(R.drawable.event_public);				
+				eventImage.setImageResource(R.drawable.event_public);
 			} else {
 				eventImage.setImageResource(R.drawable.event_private);
-			}	
+			}
 			eventOwner.setText(event.getOwner().getName());
 			if (event.getMembers().size() == 1) {
 				eventMemberCount.setText("1 member");
 			} else {
-				eventMemberCount.setText(event.getMembers().size() + " members");				
+				eventMemberCount.setText(event.getMembers().size() + " members");
 			}
 			eventName.setText(event.getName());
 		}

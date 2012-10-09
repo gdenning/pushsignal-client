@@ -16,7 +16,7 @@ public class TriggerDTO implements Serializable {
 
 	@Element
 	private long createdDateInMilliseconds;
-	
+
 	@Element
 	private EventDTO event;
 
@@ -26,7 +26,7 @@ public class TriggerDTO implements Serializable {
 	@ElementList(name="triggerAlert", inline=true, required=false)
 	private LinkedHashSet<TriggerAlertDTO> triggerAlerts;
 
-	public void setTriggerId(long triggerId) {
+	public void setTriggerId(final long triggerId) {
 		this.triggerId = triggerId;
 	}
 
@@ -34,7 +34,7 @@ public class TriggerDTO implements Serializable {
 		return this.triggerId;
 	}
 
-	public void setCreatedDateInMilliseconds(long createdDateInMilliseconds) {
+	public void setCreatedDateInMilliseconds(final long createdDateInMilliseconds) {
 		this.createdDateInMilliseconds = createdDateInMilliseconds;
 	}
 
@@ -42,7 +42,7 @@ public class TriggerDTO implements Serializable {
 		return createdDateInMilliseconds;
 	}
 
-	public void setEvent(EventDTO event) {
+	public void setEvent(final EventDTO event) {
 		this.event = event;
 	}
 
@@ -50,7 +50,7 @@ public class TriggerDTO implements Serializable {
 		return event;
 	}
 
-	public void setUser(UserDTO user) {
+	public void setUser(final UserDTO user) {
 		this.user = user;
 	}
 
@@ -58,7 +58,7 @@ public class TriggerDTO implements Serializable {
 		return user;
 	}
 
-	public void setTriggerAlerts(LinkedHashSet<TriggerAlertDTO> triggerAlerts) {
+	public void setTriggerAlerts(final LinkedHashSet<TriggerAlertDTO> triggerAlerts) {
 		this.triggerAlerts = triggerAlerts;
 	}
 

@@ -5,11 +5,9 @@ import org.simpleframework.xml.Root;
 
 @Root(name="activity", strict=false)
 public class ActivityDTO {
-	private static final long serialVersionUID = 1L;
-
 	@Element
 	private long activityId;
-	
+
 	@Element(required=false)
 	private String description;
 
@@ -19,7 +17,7 @@ public class ActivityDTO {
 	@Element
 	private long points;
 
-	public void setActivityId(long activityId) {
+	public void setActivityId(final long activityId) {
 		this.activityId = activityId;
 	}
 
@@ -27,7 +25,7 @@ public class ActivityDTO {
 		return activityId;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -35,7 +33,7 @@ public class ActivityDTO {
 		return description;
 	}
 
-	public void setCreatedDateInMilliseconds(long createdDateInMilliseconds) {
+	public void setCreatedDateInMilliseconds(final long createdDateInMilliseconds) {
 		this.createdDateInMilliseconds = createdDateInMilliseconds;
 	}
 
@@ -43,7 +41,7 @@ public class ActivityDTO {
 		return createdDateInMilliseconds;
 	}
 
-	public void setPoints(long points) {
+	public void setPoints(final long points) {
 		this.points = points;
 	}
 

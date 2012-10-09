@@ -25,7 +25,7 @@ public class EventDTO implements Serializable {
 
 	@Element
 	private String triggerPermission;
-	
+
 	@Element
 	private boolean publicFlag;
 
@@ -34,11 +34,11 @@ public class EventDTO implements Serializable {
 
 	@ElementList(name="member", inline=true, required=false)
 	private LinkedHashSet<EventMemberDTO> members;
-	
+
 	@Element(required=false)
 	private Long lastTriggeredDateInMilliseconds;
-	
-	public void setEventId(long eventId) {
+
+	public void setEventId(final long eventId) {
 		this.eventId = eventId;
 	}
 
@@ -46,7 +46,7 @@ public class EventDTO implements Serializable {
 		return this.eventId;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -54,7 +54,7 @@ public class EventDTO implements Serializable {
 		return this.name;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -62,7 +62,7 @@ public class EventDTO implements Serializable {
 		return this.description;
 	}
 
-	public void setCreatedDateInMilliseconds(long createdDateInMilliseconds) {
+	public void setCreatedDateInMilliseconds(final long createdDateInMilliseconds) {
 		this.createdDateInMilliseconds = createdDateInMilliseconds;
 	}
 
@@ -70,7 +70,7 @@ public class EventDTO implements Serializable {
 		return createdDateInMilliseconds;
 	}
 
-	public void setTriggerPermission(String triggerPermission) {
+	public void setTriggerPermission(final String triggerPermission) {
 		this.triggerPermission = triggerPermission;
 	}
 
@@ -78,7 +78,7 @@ public class EventDTO implements Serializable {
 		return triggerPermission;
 	}
 
-	public void setPublicFlag(boolean publicFlag) {
+	public void setPublicFlag(final boolean publicFlag) {
 		this.publicFlag = publicFlag;
 	}
 
@@ -86,7 +86,7 @@ public class EventDTO implements Serializable {
 		return publicFlag;
 	}
 
-	public void setOwner(UserDTO owner) {
+	public void setOwner(final UserDTO owner) {
 		this.owner = owner;
 	}
 
@@ -94,7 +94,7 @@ public class EventDTO implements Serializable {
 		return owner;
 	}
 
-	public void setMembers(LinkedHashSet<EventMemberDTO> members) {
+	public void setMembers(final LinkedHashSet<EventMemberDTO> members) {
 		this.members = members;
 	}
 
@@ -106,7 +106,7 @@ public class EventDTO implements Serializable {
 	}
 
 	public void setLastTriggeredDateInMilliseconds(
-			Long lastTriggeredDateInMilliseconds) {
+			final Long lastTriggeredDateInMilliseconds) {
 		this.lastTriggeredDateInMilliseconds = lastTriggeredDateInMilliseconds;
 	}
 
@@ -114,9 +114,9 @@ public class EventDTO implements Serializable {
 		return lastTriggeredDateInMilliseconds;
 	}
 
-	public boolean isMember(UserDTO user) {
+	public boolean isMember(final UserDTO user) {
 		boolean userFound = false;
-		for (EventMemberDTO eventMember : getMembers()) {
+		for (final EventMemberDTO eventMember : getMembers()) {
 			if (eventMember.getUser().equals(user)) {
 				userFound = true;
 			}

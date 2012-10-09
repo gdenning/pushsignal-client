@@ -24,7 +24,7 @@ public class EventInviteDTO implements Serializable {
 	@Element(required=false)
 	private UserDTO user;
 
-	public void setEventInviteId(long eventInviteId) {
+	public void setEventInviteId(final long eventInviteId) {
 		this.eventInviteId = eventInviteId;
 	}
 
@@ -32,7 +32,7 @@ public class EventInviteDTO implements Serializable {
 		return this.eventInviteId;
 	}
 
-	public void setCreatedDateInMilliseconds(long createdDateInMilliseconds) {
+	public void setCreatedDateInMilliseconds(final long createdDateInMilliseconds) {
 		this.createdDateInMilliseconds = createdDateInMilliseconds;
 	}
 
@@ -44,11 +44,11 @@ public class EventInviteDTO implements Serializable {
 		return event;
 	}
 
-	public void setEvent(EventDTO event) {
+	public void setEvent(final EventDTO event) {
 		this.event = event;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(final String email) {
 		this.email = email;
 	}
 
@@ -56,7 +56,7 @@ public class EventInviteDTO implements Serializable {
 		return this.email;
 	}
 
-	public void setUser(UserDTO user) {
+	public void setUser(final UserDTO user) {
 		this.user = user;
 	}
 

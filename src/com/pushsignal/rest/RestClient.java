@@ -77,7 +77,7 @@ public class RestClient {
 	}
 
 	public UserDTO createAccount(final String email, final String name, final String description) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("email", email);
 		params.put("name", name);
 		params.put("description", description);
@@ -85,13 +85,13 @@ public class RestClient {
 	}
 
 	public UserDTO resetAccountPassword(final String email) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("email", email);
 		return queryServerPost(Constants.REST_PATH + "/account/resetPassword", params, new UserDTO());
 	}
 
 	public UserDTO updateAccount(final String email, final String name, final String description) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("email", email);
 		params.put("name", name);
 		params.put("description", description);
@@ -99,11 +99,11 @@ public class RestClient {
 	}
 
 	public UserDeviceDTO registerDevice(final String deviceType, final String deviceId, final String registrationId) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("deviceType", deviceType);
 		params.put("deviceId", deviceId);
 		params.put("registrationId", registrationId);
-		UserDeviceDTO userDeviceDTO = queryServerPost(Constants.REST_PATH + "/account/registerDevice", params, new UserDeviceDTO());
+		final UserDeviceDTO userDeviceDTO = queryServerPost(Constants.REST_PATH + "/account/registerDevice", params, new UserDeviceDTO());
 		userDeviceDTO.setClientMillisecondsSinceBoot(SystemClock.elapsedRealtime());
 		return userDeviceDTO;
 	}
@@ -122,7 +122,7 @@ public class RestClient {
 
 	public EventDTO createEvent(final String name, final String description,
 			final String triggerPermission, final boolean publicFlag) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("name", name);
 		params.put("description", description);
 		params.put("triggerPermission", triggerPermission);
@@ -132,7 +132,7 @@ public class RestClient {
 
 	public EventDTO updateEvent(final long eventId, final String name, final String description,
 			final String triggerPermission, final boolean publicFlag) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("name", name);
 		params.put("description", description);
 		params.put("triggerPermission", triggerPermission);
@@ -169,7 +169,7 @@ public class RestClient {
 	}
 
 	public EventInviteDTO createInvite(final long eventId, final String email) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("eventId", String.valueOf(eventId));
 		params.put("email", email);
 		return queryServerPost(Constants.REST_PATH + "/invites/create", params, new EventInviteDTO());
@@ -192,7 +192,7 @@ public class RestClient {
 	}
 
 	public TriggerDTO createTrigger(final long eventId) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("eventId", String.valueOf(eventId));
 		return queryServerPost(Constants.REST_PATH + "/triggers/create", params, new TriggerDTO());
 	}
@@ -230,18 +230,18 @@ public class RestClient {
 		injectParameters(httpPut, params);
 		return queryServer(httpPut, objectToPopulate);
 	}
-	
+
 	private void injectParameters(final HttpEntityEnclosingRequestBase httpRequest, final Map<String, String> params) throws Exception {
-        List<NameValuePair> nvps = null;
-        if ((params != null) && (params.size() > 0)) {
-           nvps = new ArrayList<NameValuePair>();
-           for (Map.Entry<String, String> entry : params.entrySet()) {
-              nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-           }
-        }
-        if (nvps != null) {
-        	httpRequest.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
-        }		
+		List<NameValuePair> nvps = null;
+		if ((params != null) && (params.size() > 0)) {
+			nvps = new ArrayList<NameValuePair>();
+			for (final Map.Entry<String, String> entry : params.entrySet()) {
+				nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+			}
+		}
+		if (nvps != null) {
+			httpRequest.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -256,18 +256,18 @@ public class RestClient {
 			ErrorResultDTO errorObject;
 			try {
 				errorObject = serializer.read(new ErrorResultDTO(), in);
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 				switch (httpResponse.getStatusLine().getStatusCode()) {
-					case 400: // Bad Request
-						throw new PushSignalServerException("Server error: Request is syntactically incorrect.");
-					case 401: // Unauthorized
-						throw new PushSignalServerException("Server error: Username or password are incorrect.");
-					case 404: // Not Found
-						throw new PushSignalServerException("Server error: Requested URL does not exist");
-					case 500: // Internal Error
-						throw new PushSignalServerException("An internal server error occurred.  Please try again later.");
-					default:
-						throw new PushSignalServerException("Unexpected server error: " + httpResponse.getStatusLine().getStatusCode());
+				case 400: // Bad Request
+					throw new PushSignalServerException("Server error: Request is syntactically incorrect.");
+				case 401: // Unauthorized
+					throw new PushSignalServerException("Server error: Username or password are incorrect.");
+				case 404: // Not Found
+					throw new PushSignalServerException("Server error: Requested URL does not exist");
+				case 500: // Internal Error
+					throw new PushSignalServerException("An internal server error occurred.  Please try again later.");
+				default:
+					throw new PushSignalServerException("Unexpected server error: " + httpResponse.getStatusLine().getStatusCode());
 				}
 			}
 			throw new PushSignalServerException(errorObject);

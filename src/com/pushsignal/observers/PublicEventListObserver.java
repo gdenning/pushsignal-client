@@ -13,8 +13,8 @@ import com.pushsignal.xml.simple.EventDTO;
  * Observer class for updating the eventList when a change notification is received from the service.
  */
 public class PublicEventListObserver implements Observer {
-	private Handler handler;
-	private List<EventDTO> events;
+	private final Handler handler;
+	private final List<EventDTO> events;
 
 	public PublicEventListObserver(final Handler handler, final List<EventDTO> events) {
 		this.handler = handler;

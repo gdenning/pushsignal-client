@@ -29,7 +29,7 @@ import android.widget.TextView;
 
 import com.pushsignal.AppUserDevice;
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
+import com.pushsignal.NotificationDisplay;
 import com.pushsignal.R;
 import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.observers.AppObservable;
@@ -85,7 +85,7 @@ public class EventViewerActivity extends Activity {
 		eventMembers = new ArrayList<EventMemberDTO>(event.getMembers());
 		adapter = new ArrayAdapter<EventMemberDTO>(this, R.layout.simple_list_item, R.id.rowText, eventMembers);
 		mMemberList.setAdapter(adapter);
-		UserDTO userMe = AppUserDevice.getInstance().getUser();
+		final UserDTO userMe = AppUserDevice.getInstance().getUser();
 		if (event.getTriggerPermission().equals("OWNER_ONLY") && !event.getOwner().equals(userMe)) {
 			mTriggerButton.setVisibility(View.INVISIBLE);
 		}
@@ -110,11 +110,11 @@ public class EventViewerActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		UserDTO userMe = AppUserDevice.getInstance().getUser();
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		final MenuInflater inflater = getMenuInflater();
+		final UserDTO userMe = AppUserDevice.getInstance().getUser();
 		if (userMe == null) {
-			NotificationHandler.showError(this,
+			NotificationDisplay.showError(this,
 					"PushSignal did not register properly.  Unable to show event actions at this time.");
 			return false;
 		}
@@ -125,9 +125,9 @@ public class EventViewerActivity extends Activity {
 		}
 		return true;
 	}
-	
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.join_event:
@@ -145,7 +145,7 @@ public class EventViewerActivity extends Activity {
 		case R.id.leave_delete_event:
 			Log.d(Constants.CLIENT_LOG_TAG,
 					"leave_delete_event menu button clicked");
-			UserDTO userMe = AppUserDevice.getInstance().getUser();
+			final UserDTO userMe = AppUserDevice.getInstance().getUser();
 			if (event.getOwner().equals(userMe)) {
 				showDeleteEventDialog();
 			} else {
@@ -194,7 +194,7 @@ public class EventViewerActivity extends Activity {
 		});
 		builder.show();
 	}
-	
+
 	private void showTriggerEventDialog() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(EventViewerActivity.this);
 		builder.setMessage("Trigger '" + event.getName() + "'?")
@@ -255,7 +255,7 @@ public class EventViewerActivity extends Activity {
 				results.add(emailAddress);
 			}
 		}
-		
+
 		return results;
 	}
 
@@ -281,12 +281,12 @@ public class EventViewerActivity extends Activity {
 		i.putExtra("triggerId", trigger.getTriggerId());
 		startActivity(i);
 	}
-	
+
 	private String timeAgo(final Long lastTriggeredDateInMilliseconds) {
 		if (lastTriggeredDateInMilliseconds == null) {
 			return "Never";
 		}
-		long millisecondsAgo = SystemClock.elapsedRealtime() - AppUserDevice.getInstance().calculateMillisecondsSinceBootForServerDate(lastTriggeredDateInMilliseconds);
+		final long millisecondsAgo = SystemClock.elapsedRealtime() - AppUserDevice.getInstance().calculateMillisecondsSinceBootForServerDate(lastTriggeredDateInMilliseconds);
 		if (millisecondsAgo < 0) {
 			return "Unknown - not yet registered";
 		} else if (millisecondsAgo < 60000) {
@@ -301,73 +301,73 @@ public class EventViewerActivity extends Activity {
 	}
 
 	private class LeaveEventAsyncTask extends RestCallAsyncTask<Long> {
-		
+
 		public LeaveEventAsyncTask(final Context context) {
 			super(context);
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
-			Long eventId = params[0];
+		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
+			final Long eventId = params[0];
 			restClient.leaveEvent(eventId);
 		}
 
 		@Override
 		protected void onSuccess(final Context context) {
-			NotificationHandler.showInfo(context, "Left event successfully.");
+			NotificationDisplay.showInfo(context, "Left event successfully.");
 			finish();
 		}
 	}
 
 	private class DeleteEventAsyncTask extends RestCallAsyncTask<Long> {
-		
+
 		public DeleteEventAsyncTask(final Context context) {
 			super(context);
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
-			Long eventId = params[0];
+		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
+			final Long eventId = params[0];
 			restClient.deleteEvent(eventId);
 		}
 
 		@Override
 		protected void onSuccess(final Context context) {
-			NotificationHandler.showInfo(context, "Deleted event successfully.");
+			NotificationDisplay.showInfo(context, "Deleted event successfully.");
 			finish();
 		}
 	}
 
 	private class JoinEventAsyncTask extends RestCallAsyncTask<Long> {
-		
+
 		public JoinEventAsyncTask(final Context context) {
 			super(context);
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
-			Long eventId = params[0];
+		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
+			final Long eventId = params[0];
 			restClient.joinEvent(eventId);
 		}
 
 		@Override
 		protected void onSuccess(final Context context) {
-			NotificationHandler.showInfo(context, "Successfully joined event.");
+			NotificationDisplay.showInfo(context, "Successfully joined event.");
 			finish();
 		}
 	}
 
 	private class CreateTriggerAsyncTask extends RestCallAsyncTask<Long> {
-		
+
 		private TriggerDTO trigger;
-		
+
 		public CreateTriggerAsyncTask(final Context context) {
 			super(context);
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
-			Long eventId = params[0];
+		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
+			final Long eventId = params[0];
 			trigger = restClient.createTrigger(eventId);
 		}
 
@@ -379,21 +379,21 @@ public class EventViewerActivity extends Activity {
 	}
 
 	private class CreateInviteAsyncTask extends RestCallAsyncTask<Object> {
-		
+
 		public CreateInviteAsyncTask(final Context context) {
 			super(context);
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Object... params) throws Exception {
-			Long eventId = (Long) params[0];
-			String emailAddress = (String) params[1];
+		protected void doRestCall(final RestClient restClient, final Object... params) throws Exception {
+			final Long eventId = (Long) params[0];
+			final String emailAddress = (String) params[1];
 			restClient.createInvite(eventId, emailAddress);
 		}
 
 		@Override
 		protected void onSuccess(final Context context) {
-			NotificationHandler.showInfo(context, "Invite sent successfully.");
+			NotificationDisplay.showInfo(context, "Invite sent successfully.");
 		}
 	}
 }

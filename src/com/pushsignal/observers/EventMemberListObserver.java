@@ -16,8 +16,8 @@ import com.pushsignal.xml.simple.EventMemberDTO;
  * this class's trigger object when a change notification is received from the service.
  */
 public class EventMemberListObserver implements Observer {
-	private Handler handler;
-	private List<EventMemberDTO> eventMembers;
+	private final Handler handler;
+	private final List<EventMemberDTO> eventMembers;
 
 	public EventMemberListObserver(final Handler handler, final List<EventMemberDTO> eventMembers) {
 		this.handler = handler;

@@ -13,7 +13,7 @@ import android.util.Log;
 
 import com.pushsignal.AppUserDevice;
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
+import com.pushsignal.NotificationDisplay;
 import com.pushsignal.observers.AppObservable;
 import com.pushsignal.observers.ObserverData;
 import com.pushsignal.observers.ObserverData.ActionTypeEnum;
@@ -39,7 +39,7 @@ public class PushSignalService extends Service implements Observer {
 
 	private String deviceId;
 	private String registrationId;
-	
+
 	private static final String CLIENT_TYPE = "GCM";
 
 	/**
@@ -81,7 +81,7 @@ public class PushSignalService extends Service implements Observer {
 				final TriggerAlertDTO alert = restClient.getTriggerAlert(Long.parseLong(values[1]));
 				final TriggerDTO trigger = restClient.getTrigger(alert.getTriggerId());
 				if (alert.getUser().equals(userDevice.getUser())) {
-					NotificationHandler.showNotification(notificationManager, this, trigger);
+					NotificationDisplay.showNotification(notificationManager, this, trigger);
 				} else {
 					Log.w(Constants.SERVICE_LOG_TAG, "Received trigger notification for a different user");
 				}
@@ -92,7 +92,7 @@ public class PushSignalService extends Service implements Observer {
 			try {
 				final TriggerAlertDTO alert = restClient.getTriggerAlert(Long.parseLong(values[1]));
 				if (alert.getUser().equals(userDevice.getUser())) {
-					NotificationHandler.cancelTriggerNotification(notificationManager, alert.getTriggerId());
+					NotificationDisplay.cancelTriggerNotification(notificationManager, alert.getTriggerId());
 				}
 				final AppObservable notifier = AppObservable.getInstance();
 				notifier.notifyObservers(new ObserverData(
@@ -105,7 +105,7 @@ public class PushSignalService extends Service implements Observer {
 		} else if ("INVITE".equals(values[0])) {
 			try {
 				final EventInviteDTO invite = restClient.getInvite(Long.parseLong(values[1]));
-				NotificationHandler.showNotification(notificationManager, this, invite);
+				NotificationDisplay.showNotification(notificationManager, this, invite);
 				final AppObservable notifier = AppObservable.getInstance();
 				notifier.notifyObservers(new ObserverData(
 						ObjectTypeEnum.EVENT_INVITE,
@@ -124,7 +124,7 @@ public class PushSignalService extends Service implements Observer {
 						event));
 			} catch (final Exception ex) {
 				Log.e(Constants.SERVICE_LOG_TAG, "Unable to retrieve event: " + ex.getMessage());
-			}			
+			}
 		} else if ("EVENT_DELETED".equals(values[0])) {
 			final Long eventId = Long.parseLong(values[1]);
 			final AppObservable notifier = AppObservable.getInstance();
@@ -152,7 +152,7 @@ public class PushSignalService extends Service implements Observer {
 						activity));
 			} catch (final Exception ex) {
 				Log.e(Constants.SERVICE_LOG_TAG, "Unable to retrieve activity: " + ex.getMessage());
-			}			
+			}
 		}
 	}
 
@@ -175,7 +175,7 @@ public class PushSignalService extends Service implements Observer {
 	}
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public int onStartCommand(final Intent intent, final int flags, final int startId) {
 		if (intent != null && intent.getAction() != null) {
 			if (intent.getAction().equals(Constants.ACTION_REGISTER) && !isRegistered()) {
 				Log.d(Constants.SERVICE_LOG_TAG, "Attempting to register with C2DM");

@@ -21,7 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
+import com.pushsignal.NotificationDisplay;
 import com.pushsignal.R;
 import com.pushsignal.adapters.EventListAdapter;
 import com.pushsignal.asynctasks.RestCallAsyncTask;
@@ -32,15 +32,15 @@ import com.pushsignal.xml.simple.EventDTO;
 
 public class PublicEventListActivity extends Activity {
 	private static final int PROGRESS_DIALOG = 0;
-	
+
 	private List<EventDTO> eventList;
-	
+
 	private EventListAdapter adapter;
 
 	private ListView eventListView;
 
 	private ProgressDialog progressDialog;
-	
+
 	private final Handler handleEventsChanged = new Handler() {
 		@Override
 		public void handleMessage(final Message msg) {
@@ -51,9 +51,9 @@ public class PublicEventListActivity extends Activity {
 	private final Handler handleEventsLoaded = new Handler() {
 		@Override
 		public void handleMessage(final Message msg) {
-    		adapter = new EventListAdapter(PublicEventListActivity.this, R.layout.event_list_item, eventList, getLayoutInflater());
-    		eventListView.setAdapter(adapter);
-            AppObservable.getInstance().addObserver(new PublicEventListObserver(handleEventsChanged, eventList));
+			adapter = new EventListAdapter(PublicEventListActivity.this, R.layout.event_list_item, eventList, getLayoutInflater());
+			eventListView.setAdapter(adapter);
+			AppObservable.getInstance().addObserver(new PublicEventListObserver(handleEventsChanged, eventList));
 			dismissDialog(PROGRESS_DIALOG);
 		}
 	};
@@ -61,20 +61,20 @@ public class PublicEventListActivity extends Activity {
 	private final Handler handleError = new Handler() {
 		@Override
 		public void handleMessage(final Message msg) {
-			NotificationHandler.showError(PublicEventListActivity.this, (Exception) msg.obj);
+			NotificationDisplay.showError(PublicEventListActivity.this, (Exception) msg.obj);
 			dismissDialog(PROGRESS_DIALOG);
 		}
 	};
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_list);
-		
+
 		// Obtain handles to UI objects
 		eventListView = (ListView) findViewById(R.id.eventList);
-		
+
 		// Register handler for UI elements
 		eventListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -88,7 +88,8 @@ public class PublicEventListActivity extends Activity {
 		new RefreshListAsyncTask(this).execute();
 	}
 
-	protected Dialog onCreateDialog(int id) {
+	@Override
+	protected Dialog onCreateDialog(final int id) {
 		switch(id) {
 		case PROGRESS_DIALOG:
 			progressDialog = new ProgressDialog(this);
@@ -99,16 +100,16 @@ public class PublicEventListActivity extends Activity {
 			return null;
 		}
 	}
-	
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		final MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.refresh_menu, menu);
 		return true;
 	}
-	
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.refresh:
@@ -123,14 +124,14 @@ public class PublicEventListActivity extends Activity {
 	/**
 	 * Launches the EventViewer activity to show information about a particular event.
 	 */
-	private void launchEventViewer(EventDTO event) {
-		Intent i = new Intent(this, EventViewerActivity.class);
+	private void launchEventViewer(final EventDTO event) {
+		final Intent i = new Intent(this, EventViewerActivity.class);
 		i.putExtra("event", event);
 		startActivity(i);
 	}
 
 	private class RefreshListAsyncTask extends RestCallAsyncTask<Void> {
-		
+
 		public RefreshListAsyncTask(final Context context) {
 			super(context);
 		}
@@ -140,24 +141,24 @@ public class PublicEventListActivity extends Activity {
 			// Show progress dialog
 			showDialog(PROGRESS_DIALOG);
 		}
-		
+
 		@Override
-		protected void doRestCall(RestClient restClient, Void... params) throws Exception {
+		protected void doRestCall(final RestClient restClient, final Void... params) throws Exception {
 			eventList = new ArrayList<EventDTO>(restClient.getPublicEvents().getEvents());
 		}
 
 		@Override
-		protected void onSuccess(Context context) {
+		protected void onSuccess(final Context context) {
 			adapter = new EventListAdapter(context, R.layout.event_list_item, eventList, getLayoutInflater());
 			eventListView.setAdapter(adapter);
 			AppObservable.getInstance().addObserver(new PublicEventListObserver(handleEventsChanged, eventList));
 			dismissDialog(PROGRESS_DIALOG);
 		}
-		
+
 		@Override
-		protected void onException(Context context, Exception ex) {
+		protected void onException(final Context context, final Exception ex) {
 			Log.e(Constants.CLIENT_LOG_TAG, ex.getMessage());
-			NotificationHandler.showError(context, ex.getMessage());
+			NotificationDisplay.showError(context, ex.getMessage());
 			dismissDialog(PROGRESS_DIALOG);
 		}
 	}

@@ -14,8 +14,8 @@ import com.pushsignal.xml.simple.TriggerAlertDTO;
  * this class's trigger object when a change notification is received from the service.
  */
 public class TriggerAlertListObserver implements Observer {
-	private Handler handler;
-	private List<TriggerAlertDTO> triggerAlerts;
+	private final Handler handler;
+	private final List<TriggerAlertDTO> triggerAlerts;
 
 	public TriggerAlertListObserver(final Handler handler, final List<TriggerAlertDTO> triggerAlerts) {
 		this.handler = handler;

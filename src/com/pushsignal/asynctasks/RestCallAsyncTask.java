@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
+import com.pushsignal.NotificationDisplay;
 import com.pushsignal.rest.RestClient;
 import com.pushsignal.rest.RestClientStoredCredentials;
 
@@ -20,12 +20,12 @@ public abstract class RestCallAsyncTask<T> extends AsyncTask<T, Void, Void> {
 	protected abstract void doRestCall(final RestClient restClient, final T... params) throws Exception;
 
 	protected abstract void onSuccess(final Context context);
-	
+
 	protected void onException(final Context context, final Exception ex) {
 		Log.e(Constants.CLIENT_LOG_TAG, exceptionOccurred.getMessage());
-		NotificationHandler.showError(context, exceptionOccurred.getMessage());
+		NotificationDisplay.showError(context, exceptionOccurred.getMessage());
 	}
-	
+
 	@Override
 	protected Void doInBackground(final T... params) {
 		final RestClient restClient = RestClientStoredCredentials.getInstance(context);

@@ -17,7 +17,7 @@ import com.pushsignal.xml.simple.EventInviteDTO;
 
 public class ActivityListAdapter extends ArrayAdapter<Pair<EventInviteDTO, ActivityDTO>> {
 
-	private LayoutInflater inflater;
+	private final LayoutInflater inflater;
 
 	public ActivityListAdapter(final Context context, final int textViewResourceId, final List<Pair<EventInviteDTO, ActivityDTO>> items, final LayoutInflater inflater) {
 		super(context, textViewResourceId, items);
@@ -36,17 +36,17 @@ public class ActivityListAdapter extends ArrayAdapter<Pair<EventInviteDTO, Activ
 			final TextView activitySender = (TextView) row.findViewById(R.id.activitySender);
 			final TextView activityMembersOrPoints = (TextView) row.findViewById(R.id.activityMembersOrPoints);
 			final TextView activityName = (TextView) row.findViewById(R.id.activityName);
-			
-			EventInviteDTO eventInvite = item.first;
-			ActivityDTO activity = item.second;
-			
+
+			final EventInviteDTO eventInvite = item.first;
+			final ActivityDTO activity = item.second;
+
 			if (eventInvite != null) {
 				activityImage.setImageResource(R.drawable.invite);
 				activitySender.setText(eventInvite.getUser().getName());
 				if (eventInvite.getEvent().getMembers().size() == 1) {
 					activityMembersOrPoints.setText("1 member");
 				} else {
-					activityMembersOrPoints.setText(eventInvite.getEvent().getMembers().size() + " members");				
+					activityMembersOrPoints.setText(eventInvite.getEvent().getMembers().size() + " members");
 				}
 				activityName.setText(eventInvite.getEvent().getName());
 			} else if (activity != null) {

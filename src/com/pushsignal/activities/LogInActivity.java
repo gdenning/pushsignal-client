@@ -13,9 +13,8 @@ import android.widget.EditText;
 
 import com.pushsignal.AppUserDevice;
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
+import com.pushsignal.NotificationDisplay;
 import com.pushsignal.R;
-import com.pushsignal.asynctasks.RestCallAsyncTask;
 import com.pushsignal.rest.RestClient;
 
 public class LogInActivity extends Activity {
@@ -35,7 +34,7 @@ public class LogInActivity extends Activity {
 		mPassword = (EditText) findViewById(R.id.passwordEditor);
 		mLogInButton = (Button) findViewById(R.id.loginButton);
 		mForgotPasswordButton = (Button) findViewById(R.id.forgotPasswordButton);
-		
+
 		mEmail.setText(AppUserDevice.getInstance().getGoogleUsername(this));
 
 		// Register handler for UI elements
@@ -48,7 +47,7 @@ public class LogInActivity extends Activity {
 				new LoginAsyncTask(v.getContext()).execute(email, password);
 			}
 		});
-		
+
 		mForgotPasswordButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -66,7 +65,7 @@ public class LogInActivity extends Activity {
 		final Intent i = new Intent(this, MainActivity.class);
 		startActivity(i);
 	}
-	
+
 	private final class LoginAsyncTask extends AsyncTask<String, Void, Void> {
 		private final Context context;
 		private Exception exceptionOccurred;
@@ -81,7 +80,7 @@ public class LogInActivity extends Activity {
 			final String password = params[1];
 			try {
 				// Test the login
-				RestClient restClient = new RestClient(email, password);
+				final RestClient restClient = new RestClient(email, password);
 				restClient.getAllEvents();
 			} catch (final Exception ex) {
 				exceptionOccurred = ex;
@@ -93,17 +92,17 @@ public class LogInActivity extends Activity {
 		protected void onPostExecute(final Void result) {
 			if (exceptionOccurred != null) {
 				Log.e(Constants.CLIENT_LOG_TAG, exceptionOccurred.getMessage());
-				NotificationHandler.showError(context, "Unable to login - incorrect email or password");
+				NotificationDisplay.showError(context, "Unable to login - incorrect email or password");
 				return;
 			}
-			
+
 			// Save email and password in SharedPreferences
 			final SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
 			final SharedPreferences.Editor editor = settings.edit();
 			editor.putString("email", mEmail.getText().toString());
 			editor.putString("password", mPassword.getText().toString());
 			editor.commit();
-			
+
 			launchMain();
 			finish();
 		}
@@ -122,7 +121,7 @@ public class LogInActivity extends Activity {
 			final String email = params[0];
 			try {
 				// Test the login
-				RestClient restClient = new RestClient();
+				final RestClient restClient = new RestClient();
 				restClient.resetAccountPassword(email);
 			} catch (final Exception ex) {
 				exceptionOccurred = ex;
@@ -134,10 +133,10 @@ public class LogInActivity extends Activity {
 		protected void onPostExecute(final Void result) {
 			if (exceptionOccurred != null) {
 				Log.e(Constants.CLIENT_LOG_TAG, exceptionOccurred.getMessage());
-				NotificationHandler.showError(context, exceptionOccurred.getMessage());
+				NotificationDisplay.showError(context, exceptionOccurred.getMessage());
 				return;
 			}
-			NotificationHandler.showInfo(context,
+			NotificationDisplay.showInfo(context,
 					"Password has been reset - check your email for new password");
 		}
 	}

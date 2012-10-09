@@ -51,22 +51,22 @@ public class TriggerViewerActivity extends Activity {
 		final Long triggerId = getIntent().getExtras().getLong("triggerId");
 		new LoadTriggerAsyncTask(this).execute(triggerId);
 	}
-	
+
 	private class LoadTriggerAsyncTask extends RestCallAsyncTask<Long> {
 		private TriggerDTO trigger;
-		
+
 		public LoadTriggerAsyncTask(final Context context) {
 			super(context);
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Long... params) throws Exception {
-			Long triggerId = params[0];
+		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
+			final Long triggerId = params[0];
 			trigger = restClient.getTrigger(triggerId);
 		}
 
 		@Override
-		protected void onSuccess(Context context) {
+		protected void onSuccess(final Context context) {
 			triggerAlerts = new ArrayList<TriggerAlertDTO>(trigger.getTriggerAlerts());
 			adapter = new TriggerAlertListAdapter(context, R.layout.trigger_alert_list_item, triggerAlerts, trigger, getLayoutInflater());
 
@@ -77,6 +77,6 @@ public class TriggerViewerActivity extends Activity {
 			final AppObservable eventNotifier = AppObservable.getInstance();
 			eventNotifier.addObserver(new TriggerAlertListObserver(handler, triggerAlerts));
 		}
-		
+
 	}
 }

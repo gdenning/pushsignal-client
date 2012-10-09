@@ -18,8 +18,8 @@ import com.pushsignal.xml.simple.TriggerDTO;
 
 public class TriggerAlertListAdapter extends ArrayAdapter<TriggerAlertDTO> {
 
-	private TriggerDTO trigger;
-	private LayoutInflater inflater;
+	private final TriggerDTO trigger;
+	private final LayoutInflater inflater;
 
 	public TriggerAlertListAdapter(final Context context, final int textViewResourceId, final List<TriggerAlertDTO> items, final TriggerDTO trigger, final LayoutInflater inflater) {
 		super(context, textViewResourceId, items);

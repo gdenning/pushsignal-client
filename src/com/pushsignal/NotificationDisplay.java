@@ -16,7 +16,7 @@ import com.pushsignal.activities.TriggerRespondActivity;
 import com.pushsignal.xml.simple.EventInviteDTO;
 import com.pushsignal.xml.simple.TriggerDTO;
 
-public class NotificationHandler {
+public class NotificationDisplay {
 
 	private final static int MIN_TRIGGER_ID = 0;
 	private final static int MIN_INVITE_ID = 1000000;

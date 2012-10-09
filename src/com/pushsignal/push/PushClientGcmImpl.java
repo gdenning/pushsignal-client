@@ -16,7 +16,7 @@ public class PushClientGcmImpl extends GCMBaseIntentService implements PushClien
 	private static final String APP_SENDER_ID = "372424089937";
 	private static final String GCM_MESSAGE_EXTRA = "message";
 
-	private AppObservable appObservable = AppObservable.getInstance();
+	private final AppObservable appObservable = AppObservable.getInstance();
 
 	/**
 	 * {@inheritDoc}
@@ -64,12 +64,12 @@ public class PushClientGcmImpl extends GCMBaseIntentService implements PushClien
 	}
 
 	@Override
-	protected void onError(Context context, String errorId) {
+	protected void onError(final Context context, final String errorId) {
 		Log.e(Constants.SERVICE_LOG_TAG, "GCM registration error: " + errorId);
 	}
 
 	@Override
-	protected void onMessage(Context context, Intent intent) {
+	protected void onMessage(final Context context, final Intent intent) {
 		final String message = intent.getStringExtra(GCM_MESSAGE_EXTRA);
 		final ObserverData observerData = new ObserverData(
 				ObjectTypeEnum.SERVER_MESSAGE,
@@ -79,7 +79,7 @@ public class PushClientGcmImpl extends GCMBaseIntentService implements PushClien
 	}
 
 	@Override
-	protected void onRegistered(Context context, String regId) {
+	protected void onRegistered(final Context context, final String regId) {
 		Log.i(Constants.SERVICE_LOG_TAG, "Registered to GCM: " + regId);
 		final ObserverData observerData = new ObserverData(
 				ObjectTypeEnum.SERVER_REGISTRATION_ID,
@@ -89,7 +89,7 @@ public class PushClientGcmImpl extends GCMBaseIntentService implements PushClien
 	}
 
 	@Override
-	protected void onUnregistered(Context context, String regId) {
+	protected void onUnregistered(final Context context, final String regId) {
 		Log.i(Constants.SERVICE_LOG_TAG, "Unregistered from GCM");
 	}
 }

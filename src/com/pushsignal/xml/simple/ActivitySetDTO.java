@@ -10,7 +10,7 @@ public class ActivitySetDTO {
 	@ElementList(required=false, inline=true)
 	private LinkedHashSet<ActivityDTO> activities;
 
-	public void setActivities(LinkedHashSet<ActivityDTO> activities) {
+	public void setActivities(final LinkedHashSet<ActivityDTO> activities) {
 		this.activities = activities;
 	}
 

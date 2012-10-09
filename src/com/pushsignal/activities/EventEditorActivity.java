@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pushsignal.Constants;
-import com.pushsignal.NotificationHandler;
+import com.pushsignal.NotificationDisplay;
 import com.pushsignal.R;
 import com.pushsignal.TriggerPermissionEnum;
 import com.pushsignal.asynctasks.RestCallAsyncTask;
@@ -46,7 +46,7 @@ public class EventEditorActivity extends Activity {
 	private ListView mMembersList;
 	private Button mSaveButton;
 	private TextView mMembersCaption;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -67,12 +67,12 @@ public class EventEditorActivity extends Activity {
 		if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("event")) {
 			event = (EventDTO) getIntent().getExtras().getSerializable("event");
 		}
-		
+
 		if (event == null) {
 			// Format view for creating new event
 			mNameSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 				@Override
-				public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+				public void onItemSelected(final AdapterView<?> parent, final View view, final int pos, final long id) {
 					if (mNameSpinner.getSelectedItem() != null && mNameSpinner.getSelectedItem().equals("Custom")) {
 						mNameEditor.setVisibility(View.VISIBLE);
 						mNameEditor.requestFocus();
@@ -82,11 +82,11 @@ public class EventEditorActivity extends Activity {
 				}
 
 				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
+				public void onNothingSelected(final AdapterView<?> arg0) {
 					// Do nothing
 				}
 			});
-			
+
 			mMembersCaption.setVisibility(View.GONE);
 			mMembersList.setVisibility(View.GONE);
 		} else {
@@ -96,7 +96,7 @@ public class EventEditorActivity extends Activity {
 
 			mNameCaption.setVisibility(View.GONE);
 			mNameSpinner.setVisibility(View.GONE);
-			
+
 			// Populate activity with event properties
 			mNameEditor.setText(event.getName());
 			mDescription.setText(event.getDescription());
@@ -110,16 +110,16 @@ public class EventEditorActivity extends Activity {
 			@Override
 			public void onClick(final View v) {
 				Log.d(Constants.CLIENT_LOG_TAG, "mSaveButton clicked");
-				
+
 				// Retrieve event name
-				String eventName = getEventName();
+				final String eventName = getEventName();
 
 				// Validation
 				if (eventName == null) {
-					NotificationHandler.showError(EventEditorActivity.this, "Event name is required.");
+					NotificationDisplay.showError(EventEditorActivity.this, "Event name is required.");
 					return;
 				}
-				
+
 				// Execute event
 				if (event == null) {
 					// Create new event
@@ -158,7 +158,7 @@ public class EventEditorActivity extends Activity {
 	}
 
 	private String getTriggerPermission() {
-		int index = mTriggerableBySpinner.getSelectedItemPosition();
+		final int index = mTriggerableBySpinner.getSelectedItemPosition();
 		return TriggerPermissionEnum.values()[index].name();
 	}
 
@@ -179,7 +179,7 @@ public class EventEditorActivity extends Activity {
 		i.putExtra("event", event);
 		startActivity(i);
 	}
-	
+
 	private class CreateEventAsyncTask extends RestCallAsyncTask<Object> {
 		final AppObservable notifier = AppObservable.getInstance();
 
@@ -188,16 +188,16 @@ public class EventEditorActivity extends Activity {
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Object... params) throws Exception {
-			String eventName = (String) params[0];
-			String description = (String) params[1];
-			String triggerPermission = (String) params[2];
-			Boolean isPublic = (Boolean) params[3];
+		protected void doRestCall(final RestClient restClient, final Object... params) throws Exception {
+			final String eventName = (String) params[0];
+			final String description = (String) params[1];
+			final String triggerPermission = (String) params[2];
+			final Boolean isPublic = (Boolean) params[3];
 			event = restClient.createEvent(eventName, description, triggerPermission, isPublic);
 		}
 
 		@Override
-		protected void onSuccess(Context context) {
+		protected void onSuccess(final Context context) {
 			notifier.notifyObservers(new ObserverData(
 					ObjectTypeEnum.EVENT,
 					ActionTypeEnum.CREATED,
@@ -207,9 +207,9 @@ public class EventEditorActivity extends Activity {
 		}
 
 		@Override
-		protected void onException(Context context, Exception ex) {
+		protected void onException(final Context context, final Exception ex) {
 			event = null;
-			NotificationHandler.showError(context, ex);
+			NotificationDisplay.showError(context, ex);
 		}
 	}
 
@@ -221,22 +221,22 @@ public class EventEditorActivity extends Activity {
 		}
 
 		@Override
-		protected void doRestCall(RestClient restClient, Object... params) throws Exception {
-			Long eventId = (Long) params[0];
-			String eventName = (String) params[1];
-			String description = (String) params[2];
-			String triggerPermission = (String) params[3];
-			Boolean isPublic = (Boolean) params[4];
+		protected void doRestCall(final RestClient restClient, final Object... params) throws Exception {
+			final Long eventId = (Long) params[0];
+			final String eventName = (String) params[1];
+			final String description = (String) params[2];
+			final String triggerPermission = (String) params[3];
+			final Boolean isPublic = (Boolean) params[4];
 			event = restClient.updateEvent(eventId, eventName, description, triggerPermission, isPublic);
 		}
 
 		@Override
-		protected void onSuccess(Context context) {
+		protected void onSuccess(final Context context) {
 			notifier.notifyObservers(new ObserverData(
 					ObjectTypeEnum.EVENT,
 					ActionTypeEnum.MODIFIED,
 					event));
-			NotificationHandler.showInfo(EventEditorActivity.this, "Event updated successfully");
+			NotificationDisplay.showInfo(EventEditorActivity.this, "Event updated successfully");
 			finish();
 		}
 	}

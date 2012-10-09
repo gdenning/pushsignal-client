@@ -7,7 +7,7 @@ import com.google.android.gcm.GCMBroadcastReceiver;
 public class PushSignalGcmBroadcastReceiver extends GCMBroadcastReceiver {
 
 	@Override
-	protected String getGCMIntentServiceClassName(Context context) {
+	protected String getGCMIntentServiceClassName(final Context context) {
 		return PushClientGcmImpl.class.getName();
 	}
 }

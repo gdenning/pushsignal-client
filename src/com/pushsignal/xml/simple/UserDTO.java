@@ -14,18 +14,18 @@ public class UserDTO implements Serializable {
 
 	@Element
 	private String name;
-	
+
 	// Only used by createUser and resetUser activities
 	@Element(required=false)
 	private String password;
 
 	@Element(required=false)
 	private String description;
-	
+
 	@Element
 	private long points;
 
-	public void setUserId(long userId) {
+	public void setUserId(final long userId) {
 		this.userId = userId;
 	}
 
@@ -33,7 +33,7 @@ public class UserDTO implements Serializable {
 		return this.userId;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -41,7 +41,7 @@ public class UserDTO implements Serializable {
 		return this.name;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		this.password = password;
 	}
 
@@ -49,15 +49,15 @@ public class UserDTO implements Serializable {
 		return password;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
 	public String getDescription() {
 		return this.description;
 	}
-	
-	public void setPoints(long points) {
+
+	public void setPoints(final long points) {
 		this.points = points;
 	}
 
@@ -74,7 +74,7 @@ public class UserDTO implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -84,7 +84,7 @@ public class UserDTO implements Serializable {
 		if (!(obj instanceof UserDTO)) {
 			return false;
 		}
-		UserDTO other = (UserDTO) obj;
+		final UserDTO other = (UserDTO) obj;
 		if (userId != other.userId) {
 			return false;
 		}

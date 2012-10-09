@@ -17,14 +17,14 @@ public class TriggerAlertDTO implements Serializable {
 
 	@Element
 	private UserDTO user;
-	
+
 	@Element
 	private long modifiedDateInMilliseconds;
-	
+
 	@Element
 	private String status;
-	
-	public void setTriggerAlertId(long triggerAlertId) {
+
+	public void setTriggerAlertId(final long triggerAlertId) {
 		this.triggerAlertId = triggerAlertId;
 	}
 
@@ -32,7 +32,7 @@ public class TriggerAlertDTO implements Serializable {
 		return this.triggerAlertId;
 	}
 
-	public void setTriggerId(long triggerId) {
+	public void setTriggerId(final long triggerId) {
 		this.triggerId = triggerId;
 	}
 
@@ -40,7 +40,7 @@ public class TriggerAlertDTO implements Serializable {
 		return triggerId;
 	}
 
-	public void setUser(UserDTO user) {
+	public void setUser(final UserDTO user) {
 		this.user = user;
 	}
 
@@ -52,7 +52,7 @@ public class TriggerAlertDTO implements Serializable {
 		return modifiedDateInMilliseconds;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(final String status) {
 		this.status = status.toString();
 	}
 

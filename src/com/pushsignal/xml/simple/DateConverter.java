@@ -10,21 +10,21 @@ import org.simpleframework.xml.stream.OutputNode;
 
 public class DateConverter implements Converter<Date> {
 
-	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-	
-	public Date read(InputNode node) {
+	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+	public Date read(final InputNode node) {
 		Date date = new Date();
 		try {
 			date = formatter.parse(node.getValue());
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			e.printStackTrace();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return date;
 	}
 
-	public void write(OutputNode node, Date date) {
+	public void write(final OutputNode node, final Date date) {
 		node.setValue(formatter.format(date));
 	}
 }

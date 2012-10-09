@@ -10,7 +10,7 @@ public class TriggerSetDTO {
 	@ElementList(required=false, inline=true)
 	private LinkedHashSet<TriggerDTO> triggers;
 
-	public void setTriggers(LinkedHashSet<TriggerDTO> triggers) {
+	public void setTriggers(final LinkedHashSet<TriggerDTO> triggers) {
 		this.triggers = triggers;
 	}
 

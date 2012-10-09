@@ -11,8 +11,8 @@ import com.pushsignal.observers.ObserverData.ObjectTypeEnum;
  * Observer class that simply calls the passed handler when a notification of the passed type is received.
  */
 public class BasicObserver implements Observer {
-	private Handler handler;
-	private ObjectTypeEnum objectType;
+	private final Handler handler;
+	private final ObjectTypeEnum objectType;
 
 	public BasicObserver(final Handler handler, final ObjectTypeEnum objectType) {
 		this.handler = handler;
