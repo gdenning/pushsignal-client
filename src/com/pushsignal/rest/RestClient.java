@@ -191,9 +191,10 @@ public class RestClient {
 		return queryServerGet(Constants.REST_PATH + "/triggers/missed", new TriggerSetDTO());
 	}
 
-	public TriggerDTO createTrigger(final long eventId) throws Exception {
+	public TriggerDTO createTrigger(final long eventId, final String message) throws Exception {
 		final Map<String, String> params = new HashMap<String, String>();
 		params.put("eventId", String.valueOf(eventId));
+		params.put("message", message);
 		return queryServerPost(Constants.REST_PATH + "/triggers/create", params, new TriggerDTO());
 	}
 

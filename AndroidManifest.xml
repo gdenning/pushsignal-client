@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.pushsignal" android:versionCode="13" android:versionName="2.01" android:installLocation="auto">
+	package="com.pushsignal" android:versionCode="14" android:versionName="2.02" android:installLocation="auto">
 
 	<!-- C2DM functionality was added in SDK version 8 -->
 	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />n

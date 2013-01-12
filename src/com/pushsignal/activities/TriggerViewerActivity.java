@@ -26,7 +26,7 @@ public class TriggerViewerActivity extends Activity {
 	private TriggerAlertListAdapter adapter;
 
 	private TextView mEventName;
-	private TextView mDescription;
+	private TextView mTriggerMessage;
 	private ListView mMemberList;
 
 	private final Handler handler = new Handler() {
@@ -44,7 +44,7 @@ public class TriggerViewerActivity extends Activity {
 
 		// Obtain handles to UI objects
 		mEventName = (TextView) findViewById(R.id.eventName);
-		mDescription = (TextView) findViewById(R.id.eventDescription);
+		mTriggerMessage = (TextView) findViewById(R.id.triggerMessage);
 		mMemberList = (ListView) findViewById(R.id.membersList);
 
 		// Reload the trigger so that we have the latest triggerAlert records
@@ -71,7 +71,7 @@ public class TriggerViewerActivity extends Activity {
 			adapter = new TriggerAlertListAdapter(context, R.layout.trigger_alert_list_item, triggerAlerts, trigger, getLayoutInflater());
 
 			mEventName.setText(trigger.getEvent().getName());
-			mDescription.setText(trigger.getEvent().getDescription());
+			mTriggerMessage.setText(trigger.getMessage());
 			mMemberList.setAdapter(adapter);
 
 			final AppObservable eventNotifier = AppObservable.getInstance();

@@ -23,7 +23,7 @@ public class TriggerRespondActivity extends Activity {
 	private NotificationManager notificationManager;
 
 	private TextView mEventName;
-	private TextView mDescription;
+	private TextView mTriggerMessage;
 	private Button mAcknowledgeButton;
 	private Button mIgnoreButton;
 
@@ -37,13 +37,13 @@ public class TriggerRespondActivity extends Activity {
 
 		// Obtain handles to UI objects
 		mEventName = (TextView) findViewById(R.id.eventName);
-		mDescription = (TextView) findViewById(R.id.eventDescription);
+		mTriggerMessage = (TextView) findViewById(R.id.triggerMessage);
 		mAcknowledgeButton = (Button) findViewById(R.id.acknowledge);
 		mIgnoreButton = (Button) findViewById(R.id.ignore);
 
 		trigger = (TriggerDTO) getIntent().getExtras().getSerializable("trigger");
 		mEventName.setText(trigger.getEvent().getName());
-		mDescription.setText(trigger.getEvent().getDescription());
+		mTriggerMessage.setText(trigger.getMessage());
 
 		// Register handler for UI elements
 		mAcknowledgeButton.setOnClickListener(new View.OnClickListener() {

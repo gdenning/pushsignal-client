@@ -6,10 +6,10 @@
 	<TextView android:id="@+id/eventName" android:textStyle="bold"
 		android:text="Name" android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:layout_alignParentTop="true"></TextView>
-	<TextView android:id="@+id/eventDescription" android:text="Description"
+	<TextView android:id="@+id/triggerMessage"
 		android:layout_width="fill_parent" android:layout_below="@+id/eventName"
 		android:layout_height="100dip"></TextView>
-	<TextView android:id="@+id/membersCaption" android:text="Members:"
+	<TextView android:id="@+id/membersCaption"
 		android:layout_height="wrap_content" android:textStyle="bold"
 		android:layout_below="@+id/eventDescription" android:layout_width="match_parent"></TextView>
 	<ListView android:id="@+id/membersList" android:layout_width="fill_parent"

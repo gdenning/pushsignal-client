@@ -69,7 +69,7 @@ public class NotificationDisplay {
 	public static void showNotification(final NotificationManager notificationManager,
 			final Context context, final TriggerDTO trigger) {
 		final int icon = R.drawable.ic_stat_signal;
-		final CharSequence tickerText = trigger.getEvent().getName();
+		final CharSequence tickerText = trigger.getEvent().getName() + ": " + trigger.getMessage();
 		final long when = System.currentTimeMillis();
 
 		final Notification n = new Notification(icon, tickerText, when);
@@ -92,7 +92,7 @@ public class NotificationDisplay {
 
 		n.setLatestEventInfo(context,
 				trigger.getEvent().getName(),
-				trigger.getEvent().getDescription(),
+				trigger.getMessage(),
 				pendingIntent);
 
 		notificationManager.notify((int) (trigger.getTriggerId() % MODULO) + MIN_TRIGGER_ID, n);

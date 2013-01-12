@@ -202,7 +202,7 @@ public class EventViewerActivity extends Activity {
 		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(final DialogInterface dialog, final int id) {
-				new CreateTriggerAsyncTask(EventViewerActivity.this).execute(event.getEventId());
+				new CreateTriggerAsyncTask(EventViewerActivity.this).execute(event.getEventId(), event.getDescription());
 			}
 		})
 		.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -357,7 +357,7 @@ public class EventViewerActivity extends Activity {
 		}
 	}
 
-	private class CreateTriggerAsyncTask extends RestCallAsyncTask<Long> {
+	private class CreateTriggerAsyncTask extends RestCallAsyncTask<Object> {
 
 		private TriggerDTO trigger;
 
@@ -366,9 +366,10 @@ public class EventViewerActivity extends Activity {
 		}
 
 		@Override
-		protected void doRestCall(final RestClient restClient, final Long... params) throws Exception {
-			final Long eventId = params[0];
-			trigger = restClient.createTrigger(eventId);
+		protected void doRestCall(final RestClient restClient, final Object... params) throws Exception {
+			final Long eventId = (Long) params[0];
+			final String message = (String) params[1];
+			trigger = restClient.createTrigger(eventId, message);
 		}
 
 		@Override

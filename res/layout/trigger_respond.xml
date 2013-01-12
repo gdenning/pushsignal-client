@@ -7,8 +7,13 @@
 		android:layout_height="wrap_content" android:text="TextView"
 		android:textStyle="bold">
 	</TextView>
-	<TextView android:id="@+id/eventDescription" android:layout_width="fill_parent"
-		android:layout_height="150px" android:text="TextView">
+
+	<TextView
+	    android:id="@+id/triggerMessage"
+	    android:layout_width="fill_parent"
+	    android:layout_height="150px"
+	    android:text="TextView" >
+
 	</TextView>
 	<Button android:id="@+id/acknowledge" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="Acknowledge">
