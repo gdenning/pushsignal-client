@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,9 +24,9 @@ public class TriggerRespondActivity extends Activity {
 	private NotificationManager notificationManager;
 
 	private TextView mEventName;
-	private TextView mTriggerMessage;
 	private Button mAcknowledgeButton;
 	private Button mIgnoreButton;
+	private TextView mTriggerMessage;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -37,9 +38,10 @@ public class TriggerRespondActivity extends Activity {
 
 		// Obtain handles to UI objects
 		mEventName = (TextView) findViewById(R.id.eventName);
-		mTriggerMessage = (TextView) findViewById(R.id.triggerMessage);
 		mAcknowledgeButton = (Button) findViewById(R.id.acknowledge);
 		mIgnoreButton = (Button) findViewById(R.id.ignore);
+		mTriggerMessage = (TextView) findViewById(R.id.triggerMessage);
+		mTriggerMessage.setMovementMethod(ScrollingMovementMethod.getInstance());
 
 		trigger = (TriggerDTO) getIntent().getExtras().getSerializable("trigger");
 		mEventName.setText(trigger.getEvent().getName());

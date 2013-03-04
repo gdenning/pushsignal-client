@@ -1,24 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/triggerRespondLayout"
-	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android"
-	android:padding="5dp">
-	<TextView android:id="@+id/eventName" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="TextView"
-		android:textStyle="bold">
-	</TextView>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/triggerRespondLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="5dp" >
 
-	<TextView
-	    android:id="@+id/triggerMessage"
-	    android:layout_width="fill_parent"
-	    android:layout_height="150px"
-	    android:text="TextView" >
+    <TextView
+        android:id="@+id/eventName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textStyle="bold" >
+    </TextView>
 
-	</TextView>
-	<Button android:id="@+id/acknowledge" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="Acknowledge">
-	</Button>
-	<Button android:id="@+id/ignore" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="Ignore">
-	</Button>
+    <Button
+        android:id="@+id/acknowledge"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Acknowledge" />
+
+    <Button
+        android:id="@+id/ignore"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Ignore" />
+
+    <TextView
+        android:id="@+id/triggerMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="150px"
+        android:layout_weight="0.43"
+        android:text="TextView"
+        android:scrollbars="vertical" >
+    </TextView>
+
 </LinearLayout>
